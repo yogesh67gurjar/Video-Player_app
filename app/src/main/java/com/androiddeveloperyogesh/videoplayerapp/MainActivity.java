@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -19,6 +20,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideoFolderAdapter;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> foldersJismeVideosHeList;
     VideoFolderAdapter videoFolderAdapter;
     public static final int STORAGE = 11;
+    int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
                 showFolders();
             }
         }
+        binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                showFolders();
+                binding.swipeRefreshFoldersLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void showFolders() {
@@ -188,5 +199,35 @@ public class MainActivity extends AppCompatActivity {
                 requestRuntimePermissionFunc("storage");
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_toolbar_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        id = item.getItemId();
+
+        if (id == R.id.rateUs) {
+            Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
+            Intent rateIntent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(rateIntent);
+        } else if (id == R.id.refreshActivity) {
+            finish();
+            startActivity(getIntent());
+
+        } else if (id == R.id.shareApp) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
+            shareIntent.setType("text/plain");
+            startActivity(Intent.createChooser(shareIntent, "share app via..."));
+        }
+
+        return super.onOptionsItemSelected(item);
+
     }
 }
