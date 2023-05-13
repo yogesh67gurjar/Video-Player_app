@@ -19,10 +19,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideoFolderAdapter;
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoFiles;
-import com.androiddeveloperyogesh.videoplayerapp.Welcome.AllowPermissions;
+import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
@@ -31,12 +31,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Intent intent;
-
-    List<VideoFiles> videoFilesList;
-    List<String> folderPathList;
-
+    List<VideoRelatedDetails> videoRelatedDetailsList;
+    List<String> foldersJismeVideosHeList;
     VideoFolderAdapter videoFolderAdapter;
-
     public static final int STORAGE = 11;
 
     @Override
@@ -45,10 +42,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        videoFilesList = new ArrayList<>();
-        folderPathList = new ArrayList<>();
+        videoRelatedDetailsList = new ArrayList<>();
+        foldersJismeVideosHeList = new ArrayList<>();
     }
-
 
     @Override
     protected void onResume() {
@@ -56,30 +52,47 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (!Environment.isExternalStorageManager()) {
                 requestRuntimePermissionFunc("manageStorage");
+            } else {
+                showFolders();
             }
         } else {
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 requestRuntimePermissionFunc("storage");
+            } else {
+                showFolders();
             }
         }
-
-        showFolders();
     }
 
     private void showFolders() {
-        videoFilesList = fetchVideoFiles();
-        videoFolderAdapter = new VideoFolderAdapter(this, videoFilesList, folderPathList);
-        binding.foldersRv.setAdapter(videoFolderAdapter);
-        binding.foldersRv.setLayoutManager(new LinearLayoutManager(this));
-
-
+        videoRelatedDetailsList = getVideoRelatedDetailsListFunc();
+        if (foldersJismeVideosHeList.size() > 0) {
+            //  recyclerview me apn folders ki list dikhanege
+            //  extra me apn ne videos related details bhi le k pass kr di he qki apn usko wha click pr use krenge usko
+            //  and phir videos k recyclerview ko show krenge is list k data se
+            videoFolderAdapter = new VideoFolderAdapter(this, videoRelatedDetailsList, foldersJismeVideosHeList);
+            binding.foldersRv.setAdapter(videoFolderAdapter);
+            binding.foldersRv.setLayoutManager(new LinearLayoutManager(this));
+            binding.foldersRv.setVisibility(View.VISIBLE);
+            binding.noData.setVisibility(View.GONE);
+        } else {
+            binding.foldersRv.setVisibility(View.GONE);
+            binding.noData.setVisibility(View.VISIBLE);
+        }
     }
 
-    private List<VideoFiles> fetchVideoFiles() {
-        List<VideoFiles> videoFilesList = new ArrayList<>();
+    private List<VideoRelatedDetails> getVideoRelatedDetailsListFunc() {
+        List<VideoRelatedDetails> videoRelatedDetailsList = new ArrayList<>();
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
+        //  MediaStore.Audio.Media.EXTERNAL_CONTENT_URI = isse saari audios ka uri mil jaega
+        //  MediaStore.Video.Media.EXTERNAL_CONTENT_URI = isse saari videos ka uri mil jaega
+        //  MediaStore.Images.Media.EXTERNAL_CONTENT_URI = isse saari images ka uri mil jaega
+        //  MediaStore.Downloads.Media.EXTERNAL_CONTENT_URI = isse saari downloaded files ka uri mil jaega
+        //  MediaStore.Files.Media.EXTERNAL_CONTENT_URI = isse saare docs ka uri mil jaega
+
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        //  ek cursor ki help se hr ek uri ko dekho
         if (cursor != null && cursor.moveToNext()) {
             do {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
@@ -90,11 +103,22 @@ public class MainActivity extends AppCompatActivity {
                 String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
                 String dateAdded = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED));
 
-                VideoFiles videoFiles = new VideoFiles(id, title, displayName, size, duration, path, dateAdded);
-                int index=path.lastIndexOf("/");
-                
-            }
+                VideoRelatedDetails videoRelatedDetails = new VideoRelatedDetails(id, title, displayName, size, duration, path, dateAdded);
+
+                //  jese apne paas current video ka path he
+                //  Android/data/videos/whatsapp/whatsappvideos/private/myvideo.mp4
+                //  to isme se apn last index utha rhe he and wha tk ki ek substring bna rhe he like this
+                //  Android/data/videos/whatsapp/whatsappvideos/private
+
+                int isVideoKaIndex = path.lastIndexOf("/");
+                String subString = path.substring(0, isVideoKaIndex);
+                if (!foldersJismeVideosHeList.contains(subString)) {
+                    foldersJismeVideosHeList.add(subString);
+                }
+                videoRelatedDetailsList.add(videoRelatedDetails);
+            } while (cursor.moveToNext());
         }
+        return videoRelatedDetailsList;
     }
 
     private void requestRuntimePermissionFunc(String permissionName) {

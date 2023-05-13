@@ -1,9 +1,15 @@
 package com.androiddeveloperyogesh.videoplayerapp.Models;
 
-public class VideoFiles {
-    private String id, title, displayName, size, duration, path, dateAdded;
+public class VideoRelatedDetails {
+    private String id;
+    private String title;
+    private String displayName;
+    private String size;
+    private String duration;
+    private String path;
+    private String dateAdded;
 
-    public VideoFiles(String id, String title, String displayName, String size, String duration, String path, String dateAdded) {
+    public VideoRelatedDetails(String id, String title, String displayName, String size, String duration, String path, String dateAdded) {
         this.id = id;
         this.title = title;
         this.displayName = displayName;

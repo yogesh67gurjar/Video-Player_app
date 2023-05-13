@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoFiles;
+import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.VideoFilesList;
 
@@ -20,13 +20,13 @@ import java.util.List;
 public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.VideoFolderViewHolder> {
     Context context;
     Intent intent;
-    List<VideoFiles> videoFilesList;
-    List<String> folderPathList;
+    List<VideoRelatedDetails> videoRelatedDetailsList;
+    List<String> foldersJismeVideosHeList;
 
-    public VideoFolderAdapter(Context context, List<VideoFiles> videoFilesList, List<String> folderPathList) {
+    public VideoFolderAdapter(Context context, List<VideoRelatedDetails> videoRelatedDetailsList, List<String> foldersJismeVideosHeList) {
         this.context = context;
-        this.videoFilesList = videoFilesList;
-        this.folderPathList = folderPathList;
+        this.videoRelatedDetailsList = videoRelatedDetailsList;
+        this.foldersJismeVideosHeList = foldersJismeVideosHeList;
     }
 
     @NonNull
@@ -40,10 +40,19 @@ public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.
     @Override
     public void onBindViewHolder(@NonNull VideoFolderAdapter.VideoFolderViewHolder holder, int position) {
 
-        int indexPath = folderPathList.get(position).lastIndexOf("/");
-        String nameOfFolder = folderPathList.get(position).substring(indexPath + 1);
+
+        //  jese apne paas current folder ka path he
+        //  Android/data/videos/whatsapp/whatsappvideos/private
+        //  ab iski size he 52 to apn ne last index liya to size bni 45
+        //  to isme se apn last index utha rhe he and wha se ek substring bna rhe he like this
+        //  private
+        int indexPath = foldersJismeVideosHeList.get(position).lastIndexOf("/");
+        String nameOfFolder = foldersJismeVideosHeList.get(position).substring(indexPath + 1);
+
         holder.folderNameTv.setText(nameOfFolder);
-        holder.folderPathTv.setText(folderPathList.get(position));
+
+        holder.folderPathTv.setText(foldersJismeVideosHeList.get(position));
+
         holder.noOfFilesTv.setText("5 videos");
 
         holder.rv_card.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +66,7 @@ public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.
 
     @Override
     public int getItemCount() {
-        return folderPathList.size();
+        return foldersJismeVideosHeList.size();
     }
 
     public class VideoFolderViewHolder extends RecyclerView.ViewHolder {
