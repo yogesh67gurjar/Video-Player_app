@@ -59,8 +59,8 @@ public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.
             @Override
             public void onClick(View v) {
                 intent = new Intent(context, VideoFilesList.class);
+                intent.putExtra("folderName",nameOfFolder);
                 context.startActivity(intent);
-
             }
         });
     }

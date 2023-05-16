@@ -1,6 +1,8 @@
 package com.androiddeveloperyogesh.videoplayerapp.Models;
 
-public class VideoRelatedDetails {
+import java.io.Serializable;
+
+public class VideoRelatedDetails implements Serializable {
     private String id;
     private String title;
     private String displayName;

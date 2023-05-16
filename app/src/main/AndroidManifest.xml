@@ -17,6 +17,9 @@
         android:theme="@style/Theme.VideoPlayerApp"
         tools:targetApi="31">
         <activity
+            android:name=".VideoPlayerActivity.VideoPlayer"
+            android:exported="false" />
+        <activity
             android:name=".VideoFilesList"
             android:exported="false" />
         <activity

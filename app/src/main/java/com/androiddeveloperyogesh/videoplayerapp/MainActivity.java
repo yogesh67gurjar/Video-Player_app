@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setTitle("All Folders");
+
 
         videoRelatedDetailsList = new ArrayList<>();
         foldersJismeVideosHeList = new ArrayList<>();
@@ -203,8 +206,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_toolbar_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_option_menu, menu);
+        return true;
     }
 
     @Override
