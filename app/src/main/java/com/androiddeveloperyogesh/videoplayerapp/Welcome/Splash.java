@@ -26,8 +26,7 @@ public class Splash extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-        binding.bg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" +
-                R.raw.bg_bamboo));
+        binding.bg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg_bamboo));
         binding.bg.start();
 
         binding.bg.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
