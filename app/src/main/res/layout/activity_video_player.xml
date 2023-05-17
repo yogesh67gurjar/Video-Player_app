@@ -10,18 +10,18 @@
         android:id="@+id/exoPlayerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:hide_on_touch="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:resize_mode="fit"
-        app:shutter_background_color="@color/black"
-        app:use_controller="true"
-
-        app:controller_layout_id="@layout/exoplayer_custom_playback_view"
-        app:show_timeout="4000"
-        app:surface_type="surface_view"
         />
+
+<!--    app:hide_on_touch="true"-->
+<!--    app:resize_mode="fit"-->
+<!--    app:shutter_background_color="@color/black"-->
+<!--    app:use_controller="true"-->
+<!--    app:controller_layout_id="@layout/exoplayer_custom_playback_view"-->
+<!--    app:show_timeout="4000"-->
+<!--    app:surface_type="surface_view"-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

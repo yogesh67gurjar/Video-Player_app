@@ -23,6 +23,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideoFolderAdapter;
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
@@ -46,11 +48,39 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setTitle("All Folders");
-
+//        getSupportActionBar().setTitle("All Folders");
+        getSupportActionBar().setTitle("");
 
         videoRelatedDetailsList = new ArrayList<>();
         foldersJismeVideosHeList = new ArrayList<>();
+
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return false;
+            }
+        });
+    }
+
+    private void filter(String text) {
+        List<String> filteredlist = new ArrayList<String>();
+
+        for (String item : foldersJismeVideosHeList) {
+            if (item.toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(item);
+            }
+        }
+        if (filteredlist.isEmpty()) {
+            Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show();
+        } else {
+            videoFolderAdapter.filterList(filteredlist);
+        }
     }
 
     @Override
@@ -233,4 +263,5 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
+
 }

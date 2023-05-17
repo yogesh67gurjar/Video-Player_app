@@ -15,6 +15,7 @@ import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.VideoFilesList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.VideoFolderViewHolder> {
@@ -63,6 +64,11 @@ public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.
                 context.startActivity(intent);
             }
         });
+    }
+
+    public void filterList(List<String> filterlist) {
+        foldersJismeVideosHeList = filterlist;
+        notifyDataSetChanged();
     }
 
     @Override

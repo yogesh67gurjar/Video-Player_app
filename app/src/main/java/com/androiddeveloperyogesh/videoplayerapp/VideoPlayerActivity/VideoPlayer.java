@@ -35,30 +35,19 @@ public class VideoPlayer extends AppCompatActivity {
     SimpleExoPlayer player;
 
     int position;
-    String videoTitle;
-    List<VideoRelatedDetails> videoRelatedDetailsList;
+    VideoRelatedDetails video;
 
     ConcatenatingMediaSource concatenatingMediaSource;
-
-    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityVideoPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        videoRelatedDetailsList = new ArrayList<>();
 
         playerView = findViewById(R.id.exoPlayerView);
 
-        position = getIntent().getIntExtra("position", 1);
-        videoTitle = getIntent().getStringExtra("videoTitle");
-        videoRelatedDetailsList = (List<VideoRelatedDetails>) getIntent().getSerializableExtra("videosList");
-
-
-        View view = getLayoutInflater().inflate(R.layout.exoplayer_custom_playback_view, null);
-        title = view.findViewById(R.id.exoPlayerTitle);
-        title.setText(videoTitle);
+        video = (VideoRelatedDetails) getIntent().getExtras().getSerializable("video");
 
         playVideo();
 
@@ -67,30 +56,22 @@ public class VideoPlayer extends AppCompatActivity {
 
     private void playVideo() {
 
-
         player = new SimpleExoPlayer.Builder(this).build();
 
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "videoPlayerApp"));
 
         concatenatingMediaSource = new ConcatenatingMediaSource();
 
-        for (int i = 0; i < videoRelatedDetailsList.size(); i++) {
-            new File(String.valueOf(videoRelatedDetailsList.get(i)));
-            String path = videoRelatedDetailsList.get(position).getPath();
-            Uri uri = Uri.parse(path);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(defaultDataSourceFactory)
-                    .createMediaSource(MediaItem.fromUri(uri));
-            concatenatingMediaSource.addMediaSource(mediaSource);
-        }
-
-
+        String path = video.getPath();
+        Uri uri = Uri.parse(path);
+        MediaSource mediaSource = new ProgressiveMediaSource
+                .Factory(defaultDataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(uri));
+        concatenatingMediaSource.addMediaSource(mediaSource);
         playerView.setPlayer(player);
-
         binding.exoPlayerView.setKeepScreenOn(true);
-
         player.prepare(concatenatingMediaSource);
         player.seekTo(position, C.TIME_UNSET);
-
         playError();
     }
 
@@ -102,5 +83,15 @@ public class VideoPlayer extends AppCompatActivity {
             }
         });
         player.setPlayWhenReady(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (player != null) {
+            player.release();
+            player = null;
+        }
     }
 }

@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +33,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
     public VideosAdapter(Context context, List<VideoRelatedDetails> videoRelatedDetailsList) {
         this.context = context;
         this.videoRelatedDetailsList = videoRelatedDetailsList;
+
     }
 
     @NonNull
@@ -47,6 +49,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
         VideoRelatedDetails singleUnit = videoRelatedDetailsList.get(position);
         holder.title.setText(singleUnit.getDisplayName());
         String strSize = singleUnit.getSize();
+
         holder.size.setText(android.text.format.Formatter.formatFileSize(context, Long.parseLong(strSize)));
         double milliSeconds = Double.parseDouble(singleUnit.getDuration());
         holder.duration.setText(timeConversion((long) milliSeconds));
@@ -58,15 +61,14 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 Toast.makeText(context, "three dots clicked", Toast.LENGTH_SHORT).show();
             }
         });
+
         holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(context, VideoPlayer.class);
 
-                intent.putExtra("position", holder.getAdapterPosition());
-                intent.putExtra("videoTitle", singleUnit.getDisplayName());
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("videosList", (Serializable) videoRelatedDetailsList);
+                bundle.putSerializable("video", singleUnit);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }
