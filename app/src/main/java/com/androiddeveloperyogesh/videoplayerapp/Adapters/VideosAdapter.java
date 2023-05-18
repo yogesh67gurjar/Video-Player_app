@@ -12,8 +12,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androiddeveloperyogesh.videoplayerapp.BottomSheet.VideoThreeDot;
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.VideoPlayerActivity.VideoPlayer;
@@ -58,7 +61,19 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
         holder.threeDots.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "three dots clicked", Toast.LENGTH_SHORT).show();
+
+                VideoThreeDot bottomSheet = new VideoThreeDot(context);
+                FragmentManager fm = bottomSheet.getParentFragmentManager();
+                Bundle bundle = new Bundle();
+//                bundle.putString("latitude", String.valueOf(location.getLatitude()));
+//                bundle.putString("longitude", String.valueOf(location.getLongitude()));
+                bottomSheet.setCancelable(false);
+                bundle.putString("name", singleUnit.getDisplayName());
+                bundle.putString("thumbnail", singleUnit.getPath());
+                bottomSheet.setArguments(bundle);
+                bottomSheet.show(fm, bottomSheet.getTag());
+
+//                Toast.makeText(context, "three dots clicked", Toast.LENGTH_SHORT).show();
             }
         });
 

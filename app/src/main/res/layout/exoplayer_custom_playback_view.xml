@@ -56,6 +56,33 @@
                 android:src="@drawable/ic_three_dots_white" />
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/exoPlayerRotate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="15dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_rotate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolBar" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieLoading"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="15dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/aniki_hamster" />
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/progress"
             android:layout_width="match_parent"
@@ -102,80 +129,68 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:gravity="center_vertical"
             android:id="@+id/bottomPanel"
-            android:weightSum="8"
-            android:visibility="visible"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:weightSum="7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_weight="1"
                 android:id="@+id/exoPlayerUnLock"
-                android:src="@drawable/round_lock_open_24"
-                />
-
-            <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
+                android:src="@drawable/round_lock_open_24" />
+
+            <ImageView
                 android:id="@+id/exoPlayerRewind"
-                android:src="@drawable/ic_rewind"
-                />
-
-            <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
+                android:src="@drawable/ic_rewind" />
+
+            <ImageView
                 android:id="@+id/exoPlayerPrevious"
-                android:src="@drawable/ic_previous"
-                />
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:id="@+id/exoPlayerPlay"
-                android:src="@drawable/ic_play"
-                />
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:id="@+id/exoPlayerPause"
-                android:src="@drawable/ic_pause"
-                />
-            <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
+                android:src="@drawable/ic_previous" />
+
+            <ImageView
+                android:id="@+id/exoPlayerPlayPause"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_pause" />
+
+            <ImageView
                 android:id="@+id/exoPlayerNext"
-                android:src="@drawable/ic_next"
-                />
-
-            <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
-                android:id="@+id/exoPlayerForward"
-                android:src="@drawable/ic_forward"
-                />
+                android:src="@drawable/ic_next" />
 
             <ImageView
+                android:id="@+id/exoPlayerForward"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_forward" />
+
+            <ImageView
+                android:id="@+id/exoPlayerScaling"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_weight="1"
-                android:id="@+id/exoPlayerScaling"
-                android:src="@drawable/ic_scaling"
-                />
+                android:src="@drawable/ic_scaling" />
 
         </LinearLayout>
 
