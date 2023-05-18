@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     VideoFolderAdapter videoFolderAdapter;
     public static final int STORAGE = 11;
     int id;
+
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,12 +112,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showFolders() {
+        fragmentManager = getSupportFragmentManager();
         videoRelatedDetailsList = getVideoRelatedDetailsListFunc();
         if (foldersJismeVideosHeList.size() > 0) {
             //  recyclerview me apn folders ki list dikhanege
             //  extra me apn ne videos related details bhi le k pass kr di he qki apn usko wha click pr use krenge usko
             //  and phir videos k recyclerview ko show krenge is list k data se
-            videoFolderAdapter = new VideoFolderAdapter(this, videoRelatedDetailsList, foldersJismeVideosHeList);
+            videoFolderAdapter = new VideoFolderAdapter(this, fragmentManager, videoRelatedDetailsList, foldersJismeVideosHeList);
             binding.foldersRv.setAdapter(videoFolderAdapter);
             binding.foldersRv.setLayoutManager(new LinearLayoutManager(this));
             binding.foldersRv.setVisibility(View.VISIBLE);

@@ -1,6 +1,7 @@
 package com.androiddeveloperyogesh.videoplayerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.database.Cursor;
@@ -22,12 +23,14 @@ public class VideoFilesList extends AppCompatActivity {
 
     String folderName;
 
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityVideoFilesListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        fragmentManager = getSupportFragmentManager();
         videoRelatedDetailsList = new ArrayList<>();
         folderName = getIntent().getStringExtra("folderName");
         setSupportActionBar(binding.toolbar);
@@ -37,7 +40,7 @@ public class VideoFilesList extends AppCompatActivity {
 
     private void showVideos(String folderName) {
         videoRelatedDetailsList = getAllVideos(folderName);
-        videosAdapter = new VideosAdapter(this, videoRelatedDetailsList);
+        videosAdapter = new VideosAdapter(this,fragmentManager, videoRelatedDetailsList);
         binding.rvVideos.setAdapter(videosAdapter);
         binding.rvVideos.setLayoutManager(new LinearLayoutManager(this));
     }

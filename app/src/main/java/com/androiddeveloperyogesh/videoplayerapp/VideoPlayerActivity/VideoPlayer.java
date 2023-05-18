@@ -3,6 +3,7 @@ package com.androiddeveloperyogesh.videoplayerapp.VideoPlayerActivity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -42,12 +44,15 @@ public class VideoPlayer extends AppCompatActivity {
     //    PlayerView playerView;
     SimpleExoPlayer player;
 
-    int position;
+    String duration;
+    long position = 0;
     VideoRelatedDetails video;
+    List<VideoRelatedDetails> videos;
     DefaultDataSourceFactory defaultDataSourceFactory;
     ConcatenatingMediaSource concatenatingMediaSource;
     MediaSource mediaSource;
 
+    DefaultTimeBar timeBar;
     boolean rotationFlag = false;
 
     @Override
@@ -62,6 +67,10 @@ public class VideoPlayer extends AppCompatActivity {
 //        playerView = findViewById(R.id.exoPlayerView);
 
         video = (VideoRelatedDetails) getIntent().getExtras().getSerializable("video");
+        duration = getIntent().getExtras().getString("duration");
+        videos = (List<VideoRelatedDetails>) getIntent().getExtras().getSerializable("videos");
+
+        Log.d("ggggggggggg", String.valueOf(videos.size()));
 
         playVideo();
 
@@ -87,7 +96,7 @@ public class VideoPlayer extends AppCompatActivity {
         concatenatingMediaSource.addMediaSource(mediaSource);
 
         player.prepare(concatenatingMediaSource);
-        player.seekTo(position, C.TIME_UNSET);
+        player.seekTo((int) position, C.TIME_UNSET);
 
         binding.exoPlayerView.setPlayer(player);
         binding.exoPlayerView.setKeepScreenOn(true);
@@ -108,10 +117,23 @@ public class VideoPlayer extends AppCompatActivity {
 //        binding.exoPlayerView.setControllerShowTimeoutMs(0); // Disable the default controller timeout
 //        binding.exoPlayerView.setOverlayFrameLayout(controllerView);
 
+
+        timeBar = binding.exoPlayerView.findViewById(R.id.exoPlayerProgress);
+
+
+// Set time bar listeners or perform any additional customization if required
+// timeBar.addListener(...);
+// timeBar.setDuration(...);
+// timeBar.setPosition(...);
+// ...
+
         TextView title = binding.exoPlayerView.findViewById(R.id.exoPlayerTitle);
         title.setText(video.getTitle());
 
         ImageView backBtn = binding.exoPlayerView.findViewById(R.id.exoPlayerBack);
+
+        TextView totalDuration = binding.exoPlayerView.findViewById(R.id.exoPlayerDuration);
+        totalDuration.setText(duration);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,18 +176,57 @@ public class VideoPlayer extends AppCompatActivity {
         LottieAnimationView progress = binding.exoPlayerView.findViewById(R.id.lottieLoading);
 
 
+        ImageView forward = binding.exoPlayerView.findViewById(R.id.exoPlayerForward);
+        ImageView rewind = binding.exoPlayerView.findViewById(R.id.exoPlayerRewind);
+
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.seekForward();
+            }
+        });
+
+        rewind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.seekBack();
+            }
+        });
+
         player.addListener(new Player.Listener() {
+
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                updateTimeBar();
                 if (playbackState == Player.STATE_BUFFERING) {
                     progress.setVisibility(View.VISIBLE);
                 } else if (playbackState == Player.STATE_READY) {
                     progress.setVisibility(View.GONE);
                 }
+
+                if (playbackState == Player.STATE_ENDED) {
+                    Toast.makeText(VideoPlayer.this, "video khatam", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+
+            @Override
+            public void onPositionDiscontinuity(Player.PositionInfo oldPosition, Player.PositionInfo newPosition, int reason) {
+                updateTimeBar();
             }
         });
 
+    }
+
+    private void updateTimeBar() {
+        Log.d("gdgsdfg", String.valueOf(player.getCurrentPosition()));
+        long duration = player.getDuration();
+        long currentPosition = player.getCurrentPosition();
+        long bufferPosition = player.getBufferedPosition();
+        timeBar.setDuration(duration);
+        timeBar.setPosition(currentPosition);
+        timeBar.setBufferedPosition(bufferPosition);
     }
 
 

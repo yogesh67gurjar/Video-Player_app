@@ -32,9 +32,11 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
     Context context;
     Intent intent;
     List<VideoRelatedDetails> videoRelatedDetailsList;
+    FragmentManager fragmentManager;
 
-    public VideosAdapter(Context context, List<VideoRelatedDetails> videoRelatedDetailsList) {
+    public VideosAdapter(Context context, FragmentManager fragmentManager, List<VideoRelatedDetails> videoRelatedDetailsList) {
         this.context = context;
+        this.fragmentManager = fragmentManager;
         this.videoRelatedDetailsList = videoRelatedDetailsList;
 
     }
@@ -62,18 +64,14 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
             @Override
             public void onClick(View v) {
 
-                VideoThreeDot bottomSheet = new VideoThreeDot(context);
-                FragmentManager fm = bottomSheet.getParentFragmentManager();
                 Bundle bundle = new Bundle();
-//                bundle.putString("latitude", String.valueOf(location.getLatitude()));
-//                bundle.putString("longitude", String.valueOf(location.getLongitude()));
-                bottomSheet.setCancelable(false);
                 bundle.putString("name", singleUnit.getDisplayName());
                 bundle.putString("thumbnail", singleUnit.getPath());
-                bottomSheet.setArguments(bundle);
-                bottomSheet.show(fm, bottomSheet.getTag());
+                bundle.putSerializable("video", singleUnit);
 
-//                Toast.makeText(context, "three dots clicked", Toast.LENGTH_SHORT).show();
+                VideoThreeDot bottomSheet = new VideoThreeDot(context);
+                bottomSheet.setArguments(bundle);
+                bottomSheet.show(fragmentManager, bottomSheet.getTag());
             }
         });
 
@@ -83,7 +81,9 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 intent = new Intent(context, VideoPlayer.class);
 
                 Bundle bundle = new Bundle();
+                bundle.putString("duration", holder.duration.getText().toString());
                 bundle.putSerializable("video", singleUnit);
+                bundle.putSerializable("videos", (Serializable) videoRelatedDetailsList);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }

@@ -1,85 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:background="#00A88686"
     tools:context=".BottomSheet.VideoThreeDot">
+
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/bg_bottom_sheet_lavender"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+
+            android:id="@+id/videoTitleBottomSheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="10dp"
+            android:text="title of video"
+
+            android:textSize="12sp"
+            android:textStyle="italic|bold" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/renameBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+
+            android:drawableStart="@drawable/ic_rename"
+            android:gravity="center"
+            android:paddingHorizontal="30dp"
+            android:text="Rename"
+
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/deleteBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:drawableStart="@drawable/ic_delete"
+            android:gravity="center"
+            android:paddingHorizontal="30dp"
+            android:text="Delete"
+
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/shareBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:drawableStart="@drawable/ic_share"
+            android:gravity="center"
+            android:paddingHorizontal="30dp"
+            android:text="Share"
+
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/infoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:drawableStart="@drawable/ic_info"
+            android:gravity="center"
+            android:paddingHorizontal="30dp"
+            android:text="Info"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/thumbNail"
         android:layout_width="96dp"
         android:layout_height="96dp"
+
         android:layout_gravity="center"
-        android:layout_marginTop="8dp"
         app:civ_border_color="#FF000000"
-        app:civ_border_width="2dp" />
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/ll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ll" />
 
-    <TextView
-        android:id="@+id/videoTitleBottomSheet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="10dp"
-        android:textColor="@color/white"
-        android:textSize="19sp"
-        android:textStyle="italic|bold" />
-
-
-    <TextView
-        android:id="@+id/renameBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:drawableStart="@drawable/ic_rename"
-        android:drawablePadding="15dp"
-        android:text="Rename"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/deleteBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_weight="1"
-        android:drawableStart="@drawable/ic_delete"
-        android:drawablePadding="15dp"
-        android:text="Delete"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/shareBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_weight="1"
-        android:drawableStart="@drawable/ic_share"
-        android:drawablePadding="15dp"
-        android:text="Share"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/infoBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        android:drawableStart="@drawable/ic_info"
-        android:drawablePadding="15dp"
-        android:text="Info"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
