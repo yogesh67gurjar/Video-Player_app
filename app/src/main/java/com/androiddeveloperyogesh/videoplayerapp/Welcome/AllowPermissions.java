@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -31,9 +32,15 @@ public class AllowPermissions extends AppCompatActivity {
 
     public static final int STORAGE = 11;
 
+
+
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityAllowPermissionsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (Environment.isExternalStorageManager()) {
                 // Permission is granted
@@ -51,13 +58,6 @@ public class AllowPermissions extends AppCompatActivity {
             }
         }
 
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityAllowPermissionsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
         Log.d("fsdsdfgdfgdfgadf", getIntent().toString());
         binding.btn.setOnClickListener(new View.OnClickListener() {
             @Override

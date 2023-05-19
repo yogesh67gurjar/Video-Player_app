@@ -114,7 +114,7 @@
                 app:layout_constraintStart_toEndOf="@id/exoPlayerPosition"
                 app:layout_constraintTop_toTopOf="parent"
                 app:played_color="#77FFD0"
-                app:scrubber_drawable="@drawable/ic_scrubber" />
+                app:scrubber_drawable="@drawable/bhoot" />
 
             <TextView
                 android:id="@+id/exoPlayerDuration"

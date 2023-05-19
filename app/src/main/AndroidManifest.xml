@@ -22,7 +22,6 @@
             android:authorities="com.example.app.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-
             <!-- Define the paths for the files that can be shared -->
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
@@ -32,28 +31,29 @@
         <activity
             android:name=".VideoPlayerActivity.VideoPlayer"
             android:configChanges="orientation|screenLayout|screenSize|uiMode"
-            android:exported="false"
+            android:exported="false" />
 
-            />
         <activity
             android:name=".VideoFilesList"
             android:exported="false" />
+
         <activity
             android:name=".Welcome.AllowPermissions"
             android:exported="false" />
+
         <activity
             android:name=".Welcome.Splash"
             android:exported="true">
-<!--            android:theme="@style/fullScreenStyle">-->
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true" />
+
     </application>
 
 </manifest>
