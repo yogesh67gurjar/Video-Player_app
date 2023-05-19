@@ -44,7 +44,7 @@
             android:drawableStart="@drawable/ic_rename"
             android:gravity="center"
             android:paddingHorizontal="30dp"
-            android:text="Rename"
+            android:text="@string/rename"
 
             android:textStyle="bold" />
 
@@ -57,7 +57,7 @@
             android:drawableStart="@drawable/ic_delete"
             android:gravity="center"
             android:paddingHorizontal="30dp"
-            android:text="Delete"
+            android:text="@string/delete"
 
             android:textStyle="bold" />
 
@@ -70,7 +70,7 @@
             android:drawableStart="@drawable/ic_share"
             android:gravity="center"
             android:paddingHorizontal="30dp"
-            android:text="Share"
+            android:text="@string/share"
 
             android:textStyle="bold" />
 
@@ -84,7 +84,7 @@
             android:drawableStart="@drawable/ic_info"
             android:gravity="center"
             android:paddingHorizontal="30dp"
-            android:text="Info"
+            android:text="@string/info"
             android:textStyle="bold" />
 
     </LinearLayout>

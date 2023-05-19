@@ -15,7 +15,9 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -38,6 +40,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -50,11 +53,23 @@ public class MainActivity extends AppCompatActivity {
 
     FragmentManager fragmentManager;
 
+//    SharedPreferences sharedPreferences;
+//    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // shared preferences
+//        sharedPreferences = getSharedPreferences("xmPlayer", MODE_PRIVATE);
+//        editor = sharedPreferences.edit();
+
+// load locale
+//        loadLocale();
+
+
         setSupportActionBar(binding.toolbar);
 //        getSupportActionBar().setTitle("All Folders");
         getSupportActionBar().setTitle("");
@@ -104,7 +119,16 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             Toast.makeText(MainActivity.this, "hindi", Toast.LENGTH_SHORT).show();
-
+                            changeLanguage("hindi");
+                            appLanguageDialog.dismiss();
+                        }
+                    });
+                    english.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(MainActivity.this, "english", Toast.LENGTH_SHORT).show();
+                            changeLanguage("english");
+                            appLanguageDialog.dismiss();
                         }
                     });
                     appLanguageDialog.show();
@@ -126,6 +150,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void changeLanguage(String language) {
+        String str = "";
+        if (language.equalsIgnoreCase("hindi")) {
+            str = "hi";
+        } else if (language.equalsIgnoreCase("english")) {
+            str = "";
+        }
+        Locale locale = new Locale(str);
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
+
+//        editor.putString("language", language);
+//        editor.apply();
+
+//        finish();
+//        startActivity(getIntent());
+
+recreate();
+    }
+
+//    private void loadLocale() {
+//        if (sharedPreferences.contains("language")) {
+//            changeLanguage(sharedPreferences.getString("language", ""));
+//        }
+//    }
 
     private void filter(String text) {
         List<String> filteredlist = new ArrayList<String>();

@@ -77,7 +77,7 @@
                         android:layout_margin="15dp"
                         android:elevation="10dp"
                         android:gravity="center"
-                        android:text="Nothing found  !!!"
+                        android:text="@string/nothing_found"
                         android:textSize="33sp"
                         android:textStyle="bold" />
                 </LinearLayout>

@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/appLanguage"
-        android:title="App Language"
+        android:title="@string/app_language"
         android:icon="@drawable/ic_language"
         />
     <item android:id="@+id/appTheme"
-        android:title="App Theme"
+        android:title="@string/app_theme"
         android:icon="@drawable/ic_theme"
        />
     <item android:id="@+id/rateUs"
-        android:title="rate us"
+        android:title="@string/rate_us"
         android:icon="@drawable/ic_star"
      />
     <item android:id="@+id/shareApp"
-        android:title="share app"
+        android:title="@string/share_app"
         android:icon="@drawable/ic_share"
         />
 </menu>

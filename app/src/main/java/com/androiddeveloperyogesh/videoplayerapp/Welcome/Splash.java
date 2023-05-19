@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -47,21 +48,18 @@ public class Splash extends AppCompatActivity {
         Animation animation = AnimationUtils.loadAnimation(Splash.this, R.anim.splashtextanimation2);
         binding.name.startAnimation(animation);
         binding.lottie.animate().translationY(5000).setDuration(1000).setStartDelay(3500);
-    }
+        Handler handler = new Handler();
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        new CountDownTimer(4700, 1000) {
-            public void onTick(long millisUntilFinished) {
-            }
-
-            public void onFinish() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
                 intent = new Intent(Splash.this, AllowPermissions.class);
                 startActivity(intent);
                 finish();
             }
-        }.start();
+        };
+        handler.postDelayed(runnable, 4700);
     }
+
+
 }

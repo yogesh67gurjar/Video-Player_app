@@ -58,7 +58,7 @@ public class AllowPermissions extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAllowPermissionsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        Log.d("fsdsdfgdfgdfgadf", getIntent().toString());
         binding.btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

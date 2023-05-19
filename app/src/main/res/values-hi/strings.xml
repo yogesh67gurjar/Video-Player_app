@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video Player App</string>
+
+    <string name="allow_access">उपयोग की अनुमति दें</string>
+    <string name="nothing_found">कुछ भी नहीं मिला !!!</string>
+    <string name="are_you_sure">क्या आपको यकीन है ?</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+    <string name="save">बचाना</string>
+    <string name="rename">नाम बदलें</string>
+    <string name="delete">मिटाना</string>
+    <string name="share">साझा करें</string>
+    <string name="info">जानकारी</string>
+    <string name="app_language">ऐप भाषा</string>
+    <string name="app_theme">ऐप थीम</string>
+    <string name="rate_us">हमें रेटिंग दें</string>
+    <string name="share_app">ऐप शेयर करें</string>
+    <string name="sort_by">इसके अनुसार क्रमबद्ध करें</string>
+
+
+</resources>

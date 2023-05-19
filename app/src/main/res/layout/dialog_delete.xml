@@ -18,7 +18,7 @@
             android:layout_marginTop="10dp"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:text="Are you sure ?" />
+            android:text="@string/are_you_sure" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                 android:layout_margin="15dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_btn_lavender"
-                android:text="yes" />
+                android:text="@string/yes" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/deleteNoBtn"
@@ -43,7 +43,7 @@
                 android:layout_weight="1"
                 android:layout_margin="15dp"
                 android:background="@drawable/bg_btn_lavender"
-                android:text="no" />
+                android:text="@string/no" />
 
         </LinearLayout>
 

@@ -1,5 +1,22 @@
 <resources>
     <string name="app_name">Video Player App</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="allow_access">Allow Access</string>
+    <string name="nothing_found">Nothing found !!!</string>
+    <string name="are_you_sure">Are you sure ?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="save">save</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="share">Share</string>
+    <string name="info">Info</string>
+    <string name="app_language">App Language</string>
+    <string name="app_theme">App Theme</string>
+    <string name="rate_us">rate us</string>
+    <string name="share_app">share app</string>
+    <string name="sort_by">Sort By</string>
+
+
 </resources>
