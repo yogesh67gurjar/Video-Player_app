@@ -1,8 +1,10 @@
 package com.androiddeveloperyogesh.videoplayerapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,12 +27,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideoFolderAdapter;
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +71,57 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 filter(newText);
+                return false;
+            }
+        });
+
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, 0, 0) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        binding.drawerLayout.addDrawerListener(actionBarDrawerToggle);
+
+        binding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int Id = item.getItemId();
+                if (Id == R.id.appLanguage) {
+                    Dialog appLanguageDialog = new Dialog(MainActivity.this);
+                    appLanguageDialog.setContentView(R.layout.dialog_language);
+
+                    AppCompatButton hindi = appLanguageDialog.findViewById(R.id.hindiLanguage);
+                    AppCompatButton english = appLanguageDialog.findViewById(R.id.englishLanguage);
+
+                    hindi.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(MainActivity.this, "hindi", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                    appLanguageDialog.show();
+                } else if (Id == R.id.appTheme) {
+                    Toast.makeText(MainActivity.this, "app theme", Toast.LENGTH_SHORT).show();
+                } else if (Id == R.id.rateUs) {
+                    Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
+                    Intent rateIntent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(rateIntent);
+                } else if (Id == R.id.shareApp) {
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
+                    shareIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(shareIntent, "share app via..."));
+                }
+                binding.drawerLayout.close();
                 return false;
             }
         });
@@ -248,21 +304,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         id = item.getItemId();
 
-        if (id == R.id.rateUs) {
-            Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
-            Intent rateIntent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(rateIntent);
-        } else if (id == R.id.refreshActivity) {
-            finish();
-            startActivity(getIntent());
+        if (id == R.id.sortBy) {
+            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
 
-        } else if (id == R.id.shareApp) {
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
-            shareIntent.setType("text/plain");
-            startActivity(Intent.createChooser(shareIntent, "share app via..."));
         }
+
 
         return super.onOptionsItemSelected(item);
 

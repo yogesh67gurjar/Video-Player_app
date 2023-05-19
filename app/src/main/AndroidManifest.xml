@@ -31,7 +31,10 @@
 
         <activity
             android:name=".VideoPlayerActivity.VideoPlayer"
-            android:exported="false" />
+            android:configChanges="orientation|screenLayout|screenSize|uiMode"
+            android:exported="true"
+
+            />
         <activity
             android:name=".VideoFilesList"
             android:exported="false" />
@@ -41,6 +44,8 @@
         <activity
             android:name=".Welcome.Splash"
             android:exported="true">
+<!--            android:theme="@style/fullScreenStyle">-->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

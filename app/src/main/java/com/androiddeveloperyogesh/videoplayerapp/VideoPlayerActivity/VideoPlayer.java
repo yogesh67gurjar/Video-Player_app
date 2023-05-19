@@ -52,8 +52,10 @@ public class VideoPlayer extends AppCompatActivity {
     ConcatenatingMediaSource concatenatingMediaSource;
     MediaSource mediaSource;
 
-    DefaultTimeBar timeBar;
+//    DefaultTimeBar timeBar;
     boolean rotationFlag = false;
+
+    Player.Listener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,15 +119,6 @@ public class VideoPlayer extends AppCompatActivity {
 //        binding.exoPlayerView.setControllerShowTimeoutMs(0); // Disable the default controller timeout
 //        binding.exoPlayerView.setOverlayFrameLayout(controllerView);
 
-
-        timeBar = binding.exoPlayerView.findViewById(R.id.exoPlayerProgress);
-
-
-// Set time bar listeners or perform any additional customization if required
-// timeBar.addListener(...);
-// timeBar.setDuration(...);
-// timeBar.setPosition(...);
-// ...
 
         TextView title = binding.exoPlayerView.findViewById(R.id.exoPlayerTitle);
         title.setText(video.getTitle());
@@ -193,19 +186,16 @@ public class VideoPlayer extends AppCompatActivity {
             }
         });
 
-        player.addListener(new Player.Listener() {
-
-
+        listener = new Player.Listener() {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                updateTimeBar();
                 if (playbackState == Player.STATE_BUFFERING) {
                     progress.setVisibility(View.VISIBLE);
-                } else if (playbackState == Player.STATE_READY) {
+                } else if (playbackState == Player.STATE_READY && playWhenReady) {
                     progress.setVisibility(View.GONE);
-                }
-
-                if (playbackState == Player.STATE_ENDED) {
+                    Log.d("jjjjjjjjj", "me hu me hu");
+                    updateTimeBar();
+                } else if (playbackState == Player.STATE_ENDED) {
                     Toast.makeText(VideoPlayer.this, "video khatam", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -215,18 +205,19 @@ public class VideoPlayer extends AppCompatActivity {
             public void onPositionDiscontinuity(Player.PositionInfo oldPosition, Player.PositionInfo newPosition, int reason) {
                 updateTimeBar();
             }
-        });
-
+        };
+        player.addListener(listener);
     }
 
     private void updateTimeBar() {
-        Log.d("gdgsdfg", String.valueOf(player.getCurrentPosition()));
+//        Log.d("gdgsdfg", String.valueOf(player.getCurrentPosition()));
         long duration = player.getDuration();
         long currentPosition = player.getCurrentPosition();
         long bufferPosition = player.getBufferedPosition();
-        timeBar.setDuration(duration);
-        timeBar.setPosition(currentPosition);
-        timeBar.setBufferedPosition(bufferPosition);
+
+//        timeBar.setDuration(duration);
+//        timeBar.setPosition(currentPosition);
+//        timeBar.setBufferedPosition(bufferPosition);
     }
 
 
@@ -234,6 +225,15 @@ public class VideoPlayer extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         if (player != null) {
             player.release();
             player = null;

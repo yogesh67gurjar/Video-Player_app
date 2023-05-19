@@ -106,7 +106,7 @@
 
 
             <com.google.android.exoplayer2.ui.DefaultTimeBar
-                android:id="@+id/exoPlayerProgress"
+                android:id="@id/exo_progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"

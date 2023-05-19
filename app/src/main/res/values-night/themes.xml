@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.VideoPlayerApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.VideoPlayerApp" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
@@ -13,5 +13,14 @@
 
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bg_bottom_sheet_black</item>
+    </style>
+
+    <style name="fullScreenStyle" parent="Theme.Material3.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+
     </style>
 </resources>

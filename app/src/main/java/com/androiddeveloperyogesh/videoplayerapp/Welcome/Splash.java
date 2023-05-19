@@ -5,14 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.androiddeveloperyogesh.videoplayerapp.MainActivity;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivitySplashBinding;
+import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader;
 
 public class Splash extends AppCompatActivity {
     ActivitySplashBinding binding;
@@ -25,6 +28,7 @@ public class Splash extends AppCompatActivity {
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         binding.bg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg_bamboo));
         binding.bg.start();

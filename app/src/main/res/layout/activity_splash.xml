@@ -19,6 +19,7 @@
 
     <ImageView
         android:id="@+id/parrot"
+        android:visibility="gone"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/img_parrot"
@@ -30,6 +31,7 @@
 
     <LinearLayout
         android:id="@+id/name"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -60,6 +62,7 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie"
         android:layout_width="200dp"
+        android:visibility="gone"
         android:layout_height="200dp"
         android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
