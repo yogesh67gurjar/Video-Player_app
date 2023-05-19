@@ -1,17 +1,23 @@
 package com.androiddeveloperyogesh.videoplayerapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -23,15 +29,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideoFolderAdapter;
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -42,11 +51,25 @@ public class MainActivity extends AppCompatActivity {
     public static final int STORAGE = 11;
     int id;
 
+    FragmentManager fragmentManager;
+
+//    SharedPreferences sharedPreferences;
+//    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // shared preferences
+//        sharedPreferences = getSharedPreferences("xmPlayer", MODE_PRIVATE);
+//        editor = sharedPreferences.edit();
+
+// load locale
+//        loadLocale();
+
+
         setSupportActionBar(binding.toolbar);
 //        getSupportActionBar().setTitle("All Folders");
         getSupportActionBar().setTitle("");
@@ -66,7 +89,95 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, 0, 0) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        binding.drawerLayout.addDrawerListener(actionBarDrawerToggle);
+
+        binding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int Id = item.getItemId();
+                if (Id == R.id.appLanguage) {
+                    Dialog appLanguageDialog = new Dialog(MainActivity.this);
+                    appLanguageDialog.setContentView(R.layout.dialog_language);
+
+                    AppCompatButton hindi = appLanguageDialog.findViewById(R.id.hindiLanguage);
+                    AppCompatButton english = appLanguageDialog.findViewById(R.id.englishLanguage);
+
+                    hindi.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(MainActivity.this, "hindi", Toast.LENGTH_SHORT).show();
+                            changeLanguage("hindi");
+                            appLanguageDialog.dismiss();
+                        }
+                    });
+                    english.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(MainActivity.this, "english", Toast.LENGTH_SHORT).show();
+                            changeLanguage("english");
+                            appLanguageDialog.dismiss();
+                        }
+                    });
+                    appLanguageDialog.show();
+                } else if (Id == R.id.appTheme) {
+                    Toast.makeText(MainActivity.this, "app theme", Toast.LENGTH_SHORT).show();
+                } else if (Id == R.id.rateUs) {
+                    Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
+                    Intent rateIntent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(rateIntent);
+                } else if (Id == R.id.shareApp) {
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
+                    shareIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(shareIntent, "share app via..."));
+                }
+                binding.drawerLayout.close();
+                return false;
+            }
+        });
     }
+
+    private void changeLanguage(String language) {
+        String str = "";
+        if (language.equalsIgnoreCase("hindi")) {
+            str = "hi";
+        } else if (language.equalsIgnoreCase("english")) {
+            str = "";
+        }
+        Locale locale = new Locale(str);
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
+
+//        editor.putString("language", language);
+//        editor.apply();
+
+//        finish();
+//        startActivity(getIntent());
+
+recreate();
+    }
+
+//    private void loadLocale() {
+//        if (sharedPreferences.contains("language")) {
+//            changeLanguage(sharedPreferences.getString("language", ""));
+//        }
+//    }
 
     private void filter(String text) {
         List<String> filteredlist = new ArrayList<String>();
@@ -109,12 +220,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showFolders() {
+        fragmentManager = getSupportFragmentManager();
         videoRelatedDetailsList = getVideoRelatedDetailsListFunc();
         if (foldersJismeVideosHeList.size() > 0) {
             //  recyclerview me apn folders ki list dikhanege
             //  extra me apn ne videos related details bhi le k pass kr di he qki apn usko wha click pr use krenge usko
             //  and phir videos k recyclerview ko show krenge is list k data se
-            videoFolderAdapter = new VideoFolderAdapter(this, videoRelatedDetailsList, foldersJismeVideosHeList);
+            videoFolderAdapter = new VideoFolderAdapter(this, fragmentManager, videoRelatedDetailsList, foldersJismeVideosHeList);
             binding.foldersRv.setAdapter(videoFolderAdapter);
             binding.foldersRv.setLayoutManager(new LinearLayoutManager(this));
             binding.foldersRv.setVisibility(View.VISIBLE);
@@ -244,21 +356,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         id = item.getItemId();
 
-        if (id == R.id.rateUs) {
-            Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
-            Intent rateIntent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(rateIntent);
-        } else if (id == R.id.refreshActivity) {
-            finish();
-            startActivity(getIntent());
+        if (id == R.id.sortBy) {
+            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
 
-        } else if (id == R.id.shareApp) {
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName());
-            shareIntent.setType("text/plain");
-            startActivity(Intent.createChooser(shareIntent, "share app via..."));
         }
+
 
         return super.onOptionsItemSelected(item);
 

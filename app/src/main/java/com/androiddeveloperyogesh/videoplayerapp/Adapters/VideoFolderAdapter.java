@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
@@ -24,8 +25,11 @@ public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.
     List<VideoRelatedDetails> videoRelatedDetailsList;
     List<String> foldersJismeVideosHeList;
 
-    public VideoFolderAdapter(Context context, List<VideoRelatedDetails> videoRelatedDetailsList, List<String> foldersJismeVideosHeList) {
+    FragmentManager fragmentManager;
+
+    public VideoFolderAdapter(Context context, FragmentManager fragmentManager, List<VideoRelatedDetails> videoRelatedDetailsList, List<String> foldersJismeVideosHeList) {
         this.context = context;
+        this.fragmentManager = fragmentManager;
         this.videoRelatedDetailsList = videoRelatedDetailsList;
         this.foldersJismeVideosHeList = foldersJismeVideosHeList;
     }
@@ -60,7 +64,7 @@ public class VideoFolderAdapter extends RecyclerView.Adapter<VideoFolderAdapter.
             @Override
             public void onClick(View v) {
                 intent = new Intent(context, VideoFilesList.class);
-                intent.putExtra("folderName",nameOfFolder);
+                intent.putExtra("folderName", nameOfFolder);
                 context.startActivity(intent);
             }
         });

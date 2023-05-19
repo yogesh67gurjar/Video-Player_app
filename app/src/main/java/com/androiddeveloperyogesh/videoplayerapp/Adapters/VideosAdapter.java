@@ -12,8 +12,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androiddeveloperyogesh.videoplayerapp.BottomSheet.VideoThreeDot;
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.VideoPlayerActivity.VideoPlayer;
@@ -29,9 +32,11 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
     Context context;
     Intent intent;
     List<VideoRelatedDetails> videoRelatedDetailsList;
+    FragmentManager fragmentManager;
 
-    public VideosAdapter(Context context, List<VideoRelatedDetails> videoRelatedDetailsList) {
+    public VideosAdapter(Context context, FragmentManager fragmentManager, List<VideoRelatedDetails> videoRelatedDetailsList) {
         this.context = context;
+        this.fragmentManager = fragmentManager;
         this.videoRelatedDetailsList = videoRelatedDetailsList;
 
     }
@@ -58,7 +63,15 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
         holder.threeDots.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "three dots clicked", Toast.LENGTH_SHORT).show();
+
+                Bundle bundle = new Bundle();
+                bundle.putString("name", singleUnit.getDisplayName());
+                bundle.putString("thumbnail", singleUnit.getPath());
+                bundle.putSerializable("video", singleUnit);
+
+                VideoThreeDot bottomSheet = new VideoThreeDot(context);
+                bottomSheet.setArguments(bundle);
+                bottomSheet.show(fragmentManager, bottomSheet.getTag());
             }
         });
 
@@ -68,7 +81,9 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 intent = new Intent(context, VideoPlayer.class);
 
                 Bundle bundle = new Bundle();
+                bundle.putString("duration", holder.duration.getText().toString());
                 bundle.putSerializable("video", singleUnit);
+                bundle.putSerializable("videos", (Serializable) videoRelatedDetailsList);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }

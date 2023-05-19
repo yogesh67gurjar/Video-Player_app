@@ -1,7 +1,9 @@
 package com.androiddeveloperyogesh.videoplayerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -22,22 +24,32 @@ public class VideoFilesList extends AppCompatActivity {
 
     String folderName;
 
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityVideoFilesListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        fragmentManager = getSupportFragmentManager();
         videoRelatedDetailsList = new ArrayList<>();
         folderName = getIntent().getStringExtra("folderName");
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(folderName);
         showVideos(folderName);
+
+        binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                showVideos(folderName);
+                binding.swipeRefreshFoldersLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void showVideos(String folderName) {
         videoRelatedDetailsList = getAllVideos(folderName);
-        videosAdapter = new VideosAdapter(this, videoRelatedDetailsList);
+        videosAdapter = new VideosAdapter(this, fragmentManager, videoRelatedDetailsList);
         binding.rvVideos.setAdapter(videosAdapter);
         binding.rvVideos.setLayoutManager(new LinearLayoutManager(this));
     }
