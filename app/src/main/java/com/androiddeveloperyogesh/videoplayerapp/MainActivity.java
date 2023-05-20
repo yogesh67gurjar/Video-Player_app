@@ -15,7 +15,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -29,11 +28,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideoFolderAdapter;
+import com.androiddeveloperyogesh.videoplayerapp.Adapters.FoldersAdapter;
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
@@ -44,17 +42,15 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    Intent intent;
-    List<VideoRelatedDetails> videoRelatedDetailsList;
-    List<String> foldersJismeVideosHeList;
-    VideoFolderAdapter videoFolderAdapter;
+
+    List<VideoRelatedDetails> videos;
+    List<String> folders;
+    // isme hr ek string folder ka path hoga
+    FoldersAdapter foldersAdapter;
     public static final int STORAGE = 11;
-    int id;
 
     FragmentManager fragmentManager;
 
-//    SharedPreferences sharedPreferences;
-//    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,33 +58,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // shared preferences
-//        sharedPreferences = getSharedPreferences("xmPlayer", MODE_PRIVATE);
-//        editor = sharedPreferences.edit();
-
-// load locale
-//        loadLocale();
-
-
+        // action bar / toolbar
         setSupportActionBar(binding.toolbar);
-//        getSupportActionBar().setTitle("All Folders");
         getSupportActionBar().setTitle("");
 
-        videoRelatedDetailsList = new ArrayList<>();
-        foldersJismeVideosHeList = new ArrayList<>();
-
-        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                filter(newText);
-                return false;
-            }
-        });
+        // initialization
+        videos = new ArrayList<>();
+        folders = new ArrayList<>();
 
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, 0, 0) {
@@ -149,40 +125,27 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return false;
+            }
+        });
+
     }
-
-    private void changeLanguage(String language) {
-        String str = "";
-        if (language.equalsIgnoreCase("hindi")) {
-            str = "hi";
-        } else if (language.equalsIgnoreCase("english")) {
-            str = "";
-        }
-        Locale locale = new Locale(str);
-        Locale.setDefault(locale);
-        Configuration configuration = new Configuration();
-        configuration.locale = locale;
-        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
-
-//        editor.putString("language", language);
-//        editor.apply();
-
-//        finish();
-//        startActivity(getIntent());
-
-recreate();
-    }
-
-//    private void loadLocale() {
-//        if (sharedPreferences.contains("language")) {
-//            changeLanguage(sharedPreferences.getString("language", ""));
-//        }
-//    }
 
     private void filter(String text) {
         List<String> filteredlist = new ArrayList<String>();
 
-        for (String item : foldersJismeVideosHeList) {
+        for (String item : folders) {
             if (item.toLowerCase().contains(text.toLowerCase())) {
                 filteredlist.add(item);
             }
@@ -190,8 +153,26 @@ recreate();
         if (filteredlist.isEmpty()) {
             Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show();
         } else {
-            videoFolderAdapter.filterList(filteredlist);
+            foldersAdapter.filterList(filteredlist);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_option_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id;
+        id = item.getItemId();
+
+        if (id == R.id.sortBy) {
+            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -221,13 +202,13 @@ recreate();
 
     private void showFolders() {
         fragmentManager = getSupportFragmentManager();
-        videoRelatedDetailsList = getVideoRelatedDetailsListFunc();
-        if (foldersJismeVideosHeList.size() > 0) {
+        videos = getVideosFunc();
+        if (folders.size() > 0) {
             //  recyclerview me apn folders ki list dikhanege
             //  extra me apn ne videos related details bhi le k pass kr di he qki apn usko wha click pr use krenge usko
             //  and phir videos k recyclerview ko show krenge is list k data se
-            videoFolderAdapter = new VideoFolderAdapter(this, fragmentManager, videoRelatedDetailsList, foldersJismeVideosHeList);
-            binding.foldersRv.setAdapter(videoFolderAdapter);
+            foldersAdapter = new FoldersAdapter(this, fragmentManager, videos, folders);
+            binding.foldersRv.setAdapter(foldersAdapter);
             binding.foldersRv.setLayoutManager(new LinearLayoutManager(this));
             binding.foldersRv.setVisibility(View.VISIBLE);
             binding.noData.setVisibility(View.GONE);
@@ -237,7 +218,7 @@ recreate();
         }
     }
 
-    private List<VideoRelatedDetails> getVideoRelatedDetailsListFunc() {
+    private List<VideoRelatedDetails> getVideosFunc() {
         List<VideoRelatedDetails> videoRelatedDetailsList = new ArrayList<>();
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
@@ -268,8 +249,8 @@ recreate();
 
                 int isVideoKaIndex = path.lastIndexOf("/");
                 String subString = path.substring(0, isVideoKaIndex);
-                if (!foldersJismeVideosHeList.contains(subString)) {
-                    foldersJismeVideosHeList.add(subString);
+                if (!folders.contains(subString)) {
+                    folders.add(subString);
                 }
                 videoRelatedDetailsList.add(videoRelatedDetails);
             } while (cursor.moveToNext());
@@ -346,24 +327,21 @@ recreate();
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_option_menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        id = item.getItemId();
-
-        if (id == R.id.sortBy) {
-            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
-
+    private void changeLanguage(String language) {
+        String str = "";
+        if (language.equalsIgnoreCase("hindi")) {
+            str = "hi";
+        } else if (language.equalsIgnoreCase("english")) {
+            str = "";
         }
+        Locale locale = new Locale(str);
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
 
-
-        return super.onOptionsItemSelected(item);
-
+        recreate();
     }
 
 }

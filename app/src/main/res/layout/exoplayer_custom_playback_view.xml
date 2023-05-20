@@ -113,7 +113,7 @@
                 app:layout_constraintEnd_toStartOf="@id/exoPlayerDuration"
                 app:layout_constraintStart_toEndOf="@id/exoPlayerPosition"
                 app:layout_constraintTop_toTopOf="parent"
-                app:played_color="#FF4D62"
+                app:played_color="#FFFF33"
                 app:unplayed_color="@color/lavender"
                 app:scrubber_drawable="@drawable/ic_scrubber" />
 

@@ -22,7 +22,7 @@ public class VideoFilesList extends AppCompatActivity {
     VideosAdapter videosAdapter;
     List<VideoRelatedDetails> videoRelatedDetailsList;
 
-    String folderName;
+    String folderName, folderPath;
 
     FragmentManager fragmentManager;
 
@@ -34,9 +34,10 @@ public class VideoFilesList extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         videoRelatedDetailsList = new ArrayList<>();
         folderName = getIntent().getStringExtra("folderName");
+        folderPath = getIntent().getStringExtra("folderPath");
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(folderName);
-        showVideos(folderName);
+        showVideos(folderPath);
 
         binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -47,20 +48,20 @@ public class VideoFilesList extends AppCompatActivity {
         });
     }
 
-    private void showVideos(String folderName) {
-        videoRelatedDetailsList = getAllVideos(folderName);
+    private void showVideos(String folderPath) {
+        videoRelatedDetailsList = getAllVideos(folderPath);
         videosAdapter = new VideosAdapter(this, fragmentManager, videoRelatedDetailsList);
         binding.rvVideos.setAdapter(videosAdapter);
         binding.rvVideos.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private List<VideoRelatedDetails> getAllVideos(String folderName) {
+    private List<VideoRelatedDetails> getAllVideos(String folderPath) {
 
         List<VideoRelatedDetails> videos = new ArrayList<>();
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Video.Media.DATA + " like?";
-        String[] selectionArg = new String[]{"%" + folderName + "%"};
-        Cursor cursor = getContentResolver().query(uri, null, selection, selectionArg, null);
+        String selection = MediaStore.Video.Media.DATA + " LIKE ? AND " + MediaStore.Video.Media.DATA + " NOT LIKE ?";
+        String[] selectionArgs = new String[]{"%" + folderPath + "/%", "%" + folderPath + "/%/%"};
+        Cursor cursor = getContentResolver().query(uri, null, selection, selectionArgs, null);
         if (cursor != null && cursor.moveToNext()) {
             do {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
