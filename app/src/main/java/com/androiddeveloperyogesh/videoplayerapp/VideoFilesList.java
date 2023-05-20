@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
+import android.widget.Toast;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideosAdapter;
 import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
@@ -20,7 +22,7 @@ import java.util.List;
 public class VideoFilesList extends AppCompatActivity {
     ActivityVideoFilesListBinding binding;
     VideosAdapter videosAdapter;
-    List<VideoRelatedDetails> videoRelatedDetailsList;
+    List<VideoRelatedDetails> videos;
 
     String folderName, folderPath;
 
@@ -32,12 +34,35 @@ public class VideoFilesList extends AppCompatActivity {
         binding = ActivityVideoFilesListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         fragmentManager = getSupportFragmentManager();
-        videoRelatedDetailsList = new ArrayList<>();
+        videos = new ArrayList<>();
         folderName = getIntent().getStringExtra("folderName");
         folderPath = getIntent().getStringExtra("folderPath");
         setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setTitle(folderName);
+//        getSupportActionBar().setTitle(folderName);
+        getSupportActionBar().setTitle("");
         showVideos(folderPath);
+
+        binding.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
+
+        binding.videoSearchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return false;
+            }
+        });
 
         binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -48,9 +73,11 @@ public class VideoFilesList extends AppCompatActivity {
         });
     }
 
+
+
     private void showVideos(String folderPath) {
-        videoRelatedDetailsList = getAllVideos(folderPath);
-        videosAdapter = new VideosAdapter(this, fragmentManager, videoRelatedDetailsList);
+        videos = getAllVideos(folderPath);
+        videosAdapter = new VideosAdapter(this, fragmentManager, videos);
         binding.rvVideos.setAdapter(videosAdapter);
         binding.rvVideos.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -78,5 +105,21 @@ public class VideoFilesList extends AppCompatActivity {
             } while (cursor.moveToNext());
         }
         return videos;
+    }
+
+
+    private void filter(String text) {
+        List<VideoRelatedDetails> filteredlist = new ArrayList<VideoRelatedDetails>();
+
+        for (VideoRelatedDetails item : videos) {
+            if (item.getDisplayName().toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(item);
+            }
+        }
+        if (filteredlist.isEmpty()) {
+            Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show();
+        } else {
+            videosAdapter.filterList(filteredlist);
+        }
     }
 }

@@ -8,11 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,20 +22,18 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosViewHolder> {
     Context context;
     Intent intent;
-    List<VideoRelatedDetails> videoRelatedDetailsList;
+    List<VideoRelatedDetails> videos;
     FragmentManager fragmentManager;
 
-    public VideosAdapter(Context context, FragmentManager fragmentManager, List<VideoRelatedDetails> videoRelatedDetailsList) {
+    public VideosAdapter(Context context, FragmentManager fragmentManager, List<VideoRelatedDetails> videos) {
         this.context = context;
         this.fragmentManager = fragmentManager;
-        this.videoRelatedDetailsList = videoRelatedDetailsList;
+        this.videos = videos;
 
     }
 
@@ -51,7 +47,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
     @Override
     public void onBindViewHolder(@NonNull VideosAdapter.VideosViewHolder holder, int position) {
-        VideoRelatedDetails singleUnit = videoRelatedDetailsList.get(position);
+        VideoRelatedDetails singleUnit = videos.get(position);
         holder.title.setText(singleUnit.getDisplayName());
         String strSize = singleUnit.getSize();
 
@@ -83,12 +79,17 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 Bundle bundle = new Bundle();
                 bundle.putString("duration", holder.duration.getText().toString());
                 bundle.putSerializable("video", singleUnit);
-                bundle.putSerializable("videos", (Serializable) videoRelatedDetailsList);
+                bundle.putSerializable("videos", (Serializable) videos);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }
         });
 
+    }
+
+    public void filterList(List<VideoRelatedDetails> filterlist) {
+        videos = filterlist;
+        notifyDataSetChanged();
     }
 
     public String timeConversion(long value) {
@@ -107,7 +108,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
     @Override
     public int getItemCount() {
-        return videoRelatedDetailsList.size();
+        return videos.size();
     }
 
     public static class VideosViewHolder extends RecyclerView.ViewHolder {

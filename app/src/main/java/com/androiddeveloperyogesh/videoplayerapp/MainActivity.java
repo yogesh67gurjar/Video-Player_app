@@ -15,6 +15,7 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+//        loadLocale();
+
         // action bar / toolbar
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("");
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     hindi.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(MainActivity.this, "hindi", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "भाषा सफलतापूर्वक बदल गई", Toast.LENGTH_SHORT).show();
                             changeLanguage("hindi");
                             appLanguageDialog.dismiss();
                         }
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     english.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(MainActivity.this, "english", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Language Changed Successfully", Toast.LENGTH_SHORT).show();
                             changeLanguage("english");
                             appLanguageDialog.dismiss();
                         }
@@ -126,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -140,6 +142,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void loadLocale() {
+        SharedPreferences sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
+        if (sharedPreferences.contains("language")) {
+            String lang = sharedPreferences.getString("language", "");
+            if (lang.equalsIgnoreCase("hi")) {
+                changeLanguage("hindi");
+            } else if (lang.equalsIgnoreCase("")) {
+                changeLanguage("english");
+            }
+        }
     }
 
     private void filter(String text) {
@@ -335,13 +350,22 @@ public class MainActivity extends AppCompatActivity {
         } else if (language.equalsIgnoreCase("english")) {
             str = "";
         }
+
+        // sharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("language", str);
+        editor.commit();
+
         Locale locale = new Locale(str);
         Locale.setDefault(locale);
         Configuration configuration = new Configuration();
         configuration.locale = locale;
         getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
 
-        recreate();
+
+        finish();
+        startActivity(getIntent());
     }
 
 }
