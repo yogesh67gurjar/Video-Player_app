@@ -2,7 +2,7 @@ package com.androiddeveloperyogesh.videoplayerapp.Models;
 
 import java.io.Serializable;
 
-public class VideoRelatedDetails implements Serializable {
+public class Video implements Serializable {
     private String id;
     private String title;
     private String displayName;
@@ -11,7 +11,7 @@ public class VideoRelatedDetails implements Serializable {
     private String path;
     private String dateAdded;
 
-    public VideoRelatedDetails(String id, String title, String displayName, String size, String duration, String path, String dateAdded) {
+    public Video(String id, String title, String displayName, String size, String duration, String path, String dateAdded) {
         this.id = id;
         this.title = title;
         this.displayName = displayName;

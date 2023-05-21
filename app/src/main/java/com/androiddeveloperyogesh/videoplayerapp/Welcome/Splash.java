@@ -16,27 +16,31 @@ import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivitySplashBindi
 public class Splash extends AppCompatActivity {
     ActivitySplashBinding binding;
 
-    Handler handler;
-    Runnable runnable;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        handler = new Handler();
-        runnable = () -> {
+
+        Handler handler = new Handler();
+        Runnable runnable = () -> {
+            // isse 4700 milliseconds me AllowPermissions activity start ho jaegi
             startActivity(new Intent(Splash.this, AllowPermissions.class));
             finish();
         };
         handler.postDelayed(runnable, 4700);
 
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
+        // raw folder me rkhe video ko apn uri ki help se get kr lenge
+        // ye line ka matlab he
+        // android.resource://com.androiddeveloperyogesh.videoplayerapp/raw/bg_bamboo
         binding.bg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg_bamboo));
+        // URI.parse() function se isme jo string di he uski URI bn k apn ko mil jaegi
+        // yha phir apn ne apne videoView me videoUri set kr di he
         binding.bg.start();
 
+        // jese hi videoview prepare ho jae play hone k liye
+        // us video ko loop me chla do
         binding.bg.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -45,12 +49,15 @@ public class Splash extends AppCompatActivity {
         });
 
 
+        // splash animations
         binding.bg.animate().translationY(-5000).setDuration(1000).setStartDelay(3500);
         binding.parrot.animate().translationY(5000).setDuration(1000).setStartDelay(3500);
         binding.name.animate().translationY(5000).setDuration(1000).setStartDelay(3500);
         Animation animation = AnimationUtils.loadAnimation(Splash.this, R.anim.splashtextanimation2);
         binding.name.startAnimation(animation);
         binding.lottie.animate().translationY(5000).setDuration(1000).setStartDelay(3500);
-
     }
 }
+
+
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);

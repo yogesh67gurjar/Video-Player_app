@@ -16,7 +16,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
+import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.VideoFilesList;
 
@@ -26,13 +26,13 @@ import java.util.List;
 public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFolderViewHolder> {
     Context context;
     Intent intent;
-    List<VideoRelatedDetails> videos;
+    List<Video> videos;
     List<String> folders;
     // isme rh ek string folder ka path hoga
 
     FragmentManager fragmentManager;
 
-    public FoldersAdapter(Context context, FragmentManager fragmentManager, List<VideoRelatedDetails> videos, List<String> folders) {
+    public FoldersAdapter(Context context, FragmentManager fragmentManager, List<Video> videos, List<String> folders) {
         this.context = context;
         this.fragmentManager = fragmentManager;
         this.videos = videos;
@@ -71,6 +71,7 @@ public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFol
             @Override
             public void onClick(View v) {
                 intent = new Intent(context, VideoFilesList.class);
+
                 intent.putExtra("folderName", folderName);
                 intent.putExtra("folderPath", folderPath);
                 context.startActivity(intent);
@@ -81,7 +82,15 @@ public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFol
 
     private int getVideosCount(String folderPath) {
         Log.d("FOLDERPATHIS", folderPath);
-        List<VideoRelatedDetails> videos = new ArrayList<>();
+        List<Video> videos = new ArrayList<>();
+
+        // jese koi folder ka path apne paas he like
+        // Android/emulated/0/data/videos/whatsapp/whatsappvideos/private/myvideo.mp4
+        // to iski video to uth jaegi
+        // lekin agr apn main directory me hi dekhe like
+        // Android/emulated/0/ me to isme bahar rkhi videos uthaane k chakkar me apn wo bhi videos count kr lenge
+        // jo iski subdirectory me rkhi he
+        // isiliye apne ko ye selection lgana pdega k is folder k baad k / check mt kro
 
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Video.Media.DATA + " LIKE ? AND " + MediaStore.Video.Media.DATA + " NOT LIKE ?";
@@ -98,8 +107,8 @@ public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFol
                 String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
                 String dateAdded = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED));
 
-                VideoRelatedDetails videoRelatedDetails = new VideoRelatedDetails(id, title, displayName, size, duration, path, dateAdded);
-                videos.add(videoRelatedDetails);
+                Video video = new Video(id, title, displayName, size, duration, path, dateAdded);
+                videos.add(video);
             }
 
             cursor.close();

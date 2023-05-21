@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.VideosAdapter;
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
+import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityVideoFilesListBinding;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.List;
 public class VideoFilesList extends AppCompatActivity {
     ActivityVideoFilesListBinding binding;
     VideosAdapter videosAdapter;
-    List<VideoRelatedDetails> videos;
+    List<Video> videos;
 
     String folderName, folderPath;
 
@@ -82,9 +82,9 @@ public class VideoFilesList extends AppCompatActivity {
         binding.rvVideos.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private List<VideoRelatedDetails> getAllVideos(String folderPath) {
+    private List<Video> getAllVideos(String folderPath) {
 
-        List<VideoRelatedDetails> videos = new ArrayList<>();
+        List<Video> videos = new ArrayList<>();
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Video.Media.DATA + " LIKE ? AND " + MediaStore.Video.Media.DATA + " NOT LIKE ?";
         String[] selectionArgs = new String[]{"%" + folderPath + "/%", "%" + folderPath + "/%/%"};
@@ -99,9 +99,10 @@ public class VideoFilesList extends AppCompatActivity {
                 String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
                 String dateAdded = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED));
 
-                VideoRelatedDetails videoRelatedDetails = new VideoRelatedDetails(id, title, displayName, size, duration, path, dateAdded);
 
-                videos.add(videoRelatedDetails);
+                Video video = new Video(id, title, displayName, size, duration, path, dateAdded);
+
+                videos.add(video);
             } while (cursor.moveToNext());
         }
         return videos;
@@ -109,9 +110,9 @@ public class VideoFilesList extends AppCompatActivity {
 
 
     private void filter(String text) {
-        List<VideoRelatedDetails> filteredlist = new ArrayList<VideoRelatedDetails>();
+        List<Video> filteredlist = new ArrayList<Video>();
 
-        for (VideoRelatedDetails item : videos) {
+        for (Video item : videos) {
             if (item.getDisplayName().toLowerCase().contains(text.toLowerCase())) {
                 filteredlist.add(item);
             }

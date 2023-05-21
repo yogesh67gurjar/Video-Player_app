@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +15,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.airbnb.lottie.animation.content.Content;
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
+import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.FragmentVideoThreeDotBinding;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class VideoThreeDot extends BottomSheetDialogFragment {
@@ -31,6 +31,7 @@ public class VideoThreeDot extends BottomSheetDialogFragment {
     FragmentVideoThreeDotBinding binding;
 
     Context context;
+    List<Video> videos;
 
     String nameOfVideo;
 
@@ -38,17 +39,19 @@ public class VideoThreeDot extends BottomSheetDialogFragment {
         this.context = context;
     }
 
-    VideoRelatedDetails video;
+    Video video;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentVideoThreeDotBinding.inflate(inflater, container, false);
+        videos = new ArrayList<>();
 
         nameOfVideo = getArguments().getString("name");
         binding.videoTitleBottomSheet.setText(nameOfVideo);
 
-        video = (VideoRelatedDetails) getArguments().getSerializable("video");
+        video = (Video) getArguments().getSerializable("video");
+        videos = (List<Video>) getArguments().getSerializable("videos");
 
         Glide.with(context).load(new File(getArguments().getString("thumbnail"))).placeholder(R.drawable.img_thumbnail).into(binding.thumbNail);
         binding.deleteBtn.setOnClickListener(new View.OnClickListener() {

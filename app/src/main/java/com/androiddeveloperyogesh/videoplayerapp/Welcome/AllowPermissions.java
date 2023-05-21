@@ -28,10 +28,8 @@ import java.io.IOException;
 
 public class AllowPermissions extends AppCompatActivity {
     ActivityAllowPermissionsBinding binding;
-    Intent intent;
-
     public static final int STORAGE = 11;
-
+    Intent intent;
 
 
     @Override
@@ -40,7 +38,24 @@ public class AllowPermissions extends AppCompatActivity {
         binding = ActivityAllowPermissionsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // click pe check kro permission di he ya nhi
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    requestRuntimePermissionFunc("manageStorage");
+                } else {
+                    requestRuntimePermissionFunc("storage");
+                }
+            }
+        });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (Environment.isExternalStorageManager()) {
                 // Permission is granted
@@ -57,19 +72,6 @@ public class AllowPermissions extends AppCompatActivity {
                 finish();
             }
         }
-
-        Log.d("fsdsdfgdfgdfgadf", getIntent().toString());
-        binding.btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    requestRuntimePermissionFunc("manageStorage");
-                } else {
-                    requestRuntimePermissionFunc("storage");
-                }
-            }
-        });
-
     }
 
     private void requestRuntimePermissionFunc(String permissionName) {
@@ -131,15 +133,12 @@ public class AllowPermissions extends AppCompatActivity {
                 builder.setMessage("this feature is unavailable , now open settings ")
                         .setTitle("storage to chaiye")
                         .setCancelable(false)
-                        .setPositiveButton("accept", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                                intent.setData(uri);
-                                startActivity(intent);
-                                dialog.dismiss();
-                            }
+                        .setPositiveButton("accept", (dialog, which) -> {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                            dialog.dismiss();
                         })
                         .setNegativeButton("reject", (dialog, which) -> dialog.dismiss())
                         .show();

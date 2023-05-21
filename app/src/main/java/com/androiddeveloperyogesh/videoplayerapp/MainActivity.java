@@ -29,11 +29,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.FoldersAdapter;
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
+import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 
@@ -43,8 +42,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-
-    List<VideoRelatedDetails> videos;
+    List<Video> videos;
     List<String> folders;
     // isme hr ek string folder ka path hoga
     FoldersAdapter foldersAdapter;
@@ -69,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         videos = new ArrayList<>();
         folders = new ArrayList<>();
 
-
+        // drawer kholne k liye
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, 0, 0) {
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -83,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         };
         binding.drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
+        // navigation drawer k items ka listener
         binding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -129,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // for searching any folder by name
         binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -172,12 +172,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // right side me 3 dots wala menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_option_menu, menu);
         return true;
     }
 
+    // ye usi menu ka listener
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id;
@@ -206,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 showFolders();
             }
         }
+
         binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -215,9 +218,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void showFolders() {
         fragmentManager = getSupportFragmentManager();
-        videos = getVideosFunc();
+        videos = getFoldersFunc();
         if (folders.size() > 0) {
             //  recyclerview me apn folders ki list dikhanege
             //  extra me apn ne videos related details bhi le k pass kr di he qki apn usko wha click pr use krenge usko
@@ -233,8 +237,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private List<VideoRelatedDetails> getVideosFunc() {
-        List<VideoRelatedDetails> videoRelatedDetailsList = new ArrayList<>();
+    private List<Video> getFoldersFunc() {
+        List<Video> videoList = new ArrayList<>();
+
+        //  uri ek trh se kisi resource (jisme kuch bhi data , file ya kuch bhi ho) k path ki trh he
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
         //  MediaStore.Audio.Media.EXTERNAL_CONTENT_URI = isse saari audios ka uri mil jaega
@@ -243,10 +249,13 @@ public class MainActivity extends AppCompatActivity {
         //  MediaStore.Downloads.Media.EXTERNAL_CONTENT_URI = isse saari downloaded files ka uri mil jaega
         //  MediaStore.Files.Media.EXTERNAL_CONTENT_URI = isse saare docs ka uri mil jaega
 
+        // get content resolver apn se uri leta he and isme filtering kr skte he conditions de skte he k kya lena he kya nhi lena
+        // jese abhi apn saare hi videos le rhe he kuch filter nhi lga rhe
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         //  ek cursor ki help se hr ek uri ko dekho
         if (cursor != null && cursor.moveToNext()) {
             do {
+                // id ka column index nikaal lo and phir us index pe jo rkha he usko get kr lo cursor.getstring se
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE));
                 String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME));
@@ -255,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                 String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
                 String dateAdded = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED));
 
-                VideoRelatedDetails videoRelatedDetails = new VideoRelatedDetails(id, title, displayName, size, duration, path, dateAdded);
+                Video video = new Video(id, title, displayName, size, duration, path, dateAdded);
 
                 //  jese apne paas current video ka path he
                 //  Android/data/videos/whatsapp/whatsappvideos/private/myvideo.mp4
@@ -267,10 +276,10 @@ public class MainActivity extends AppCompatActivity {
                 if (!folders.contains(subString)) {
                     folders.add(subString);
                 }
-                videoRelatedDetailsList.add(videoRelatedDetails);
+                videoList.add(video);
             } while (cursor.moveToNext());
         }
-        return videoRelatedDetailsList;
+        return videoList;
     }
 
     private void requestRuntimePermissionFunc(String permissionName) {
@@ -364,8 +373,7 @@ public class MainActivity extends AppCompatActivity {
         getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
 
 
-        finish();
-        startActivity(getIntent());
+        recreate();
     }
 
 }

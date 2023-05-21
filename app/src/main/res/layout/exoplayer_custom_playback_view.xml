@@ -94,7 +94,7 @@
 
 
             <TextView
-                android:id="@+id/exoPlayerPosition"
+                android:id="@+id/exo_position"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -109,16 +109,17 @@
                 android:id="@id/exo_progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:buffered_color="#667759CA"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/exoPlayerDuration"
-                app:layout_constraintStart_toEndOf="@id/exoPlayerPosition"
+                app:layout_constraintEnd_toStartOf="@id/exo_duration"
+                app:layout_constraintStart_toEndOf="@id/exo_position"
                 app:layout_constraintTop_toTopOf="parent"
                 app:played_color="#FFFF33"
-                app:unplayed_color="@color/lavender"
-                app:scrubber_drawable="@drawable/ic_scrubber" />
+                app:scrubber_drawable="@drawable/ic_scrubber"
+                app:unplayed_color="#667759CA" />
 
             <TextView
-                android:id="@+id/exoPlayerDuration"
+                android:id="@+id/exo_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -152,7 +153,7 @@
                 android:src="@drawable/round_lock_open_24" />
 
             <ImageView
-                android:id="@+id/exoPlayerRewind"
+                android:id="@+id/exo_rew"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
@@ -180,7 +181,7 @@
                 android:src="@drawable/ic_next" />
 
             <ImageView
-                android:id="@+id/exoPlayerForward"
+                android:id="@+id/exo_ffwd"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"

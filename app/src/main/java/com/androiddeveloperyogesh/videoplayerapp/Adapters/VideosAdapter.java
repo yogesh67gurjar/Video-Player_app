@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androiddeveloperyogesh.videoplayerapp.BottomSheet.VideoThreeDot;
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
+import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.VideoPlayerActivity.VideoPlayer;
 import com.bumptech.glide.Glide;
@@ -27,10 +27,10 @@ import java.util.List;
 public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosViewHolder> {
     Context context;
     Intent intent;
-    List<VideoRelatedDetails> videos;
+    List<Video> videos;
     FragmentManager fragmentManager;
 
-    public VideosAdapter(Context context, FragmentManager fragmentManager, List<VideoRelatedDetails> videos) {
+    public VideosAdapter(Context context, FragmentManager fragmentManager, List<Video> videos) {
         this.context = context;
         this.fragmentManager = fragmentManager;
         this.videos = videos;
@@ -47,7 +47,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
     @Override
     public void onBindViewHolder(@NonNull VideosAdapter.VideosViewHolder holder, int position) {
-        VideoRelatedDetails singleUnit = videos.get(position);
+        Video singleUnit = videos.get(position);
         holder.title.setText(singleUnit.getDisplayName());
         String strSize = singleUnit.getSize();
 
@@ -64,6 +64,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 bundle.putString("name", singleUnit.getDisplayName());
                 bundle.putString("thumbnail", singleUnit.getPath());
                 bundle.putSerializable("video", singleUnit);
+                bundle.putSerializable("videos", (Serializable) videos);
 
                 VideoThreeDot bottomSheet = new VideoThreeDot(context);
                 bottomSheet.setArguments(bundle);
@@ -77,6 +78,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 intent = new Intent(context, VideoPlayer.class);
 
                 Bundle bundle = new Bundle();
+                bundle.putString("name", singleUnit.getDisplayName());
                 bundle.putString("duration", holder.duration.getText().toString());
                 bundle.putSerializable("video", singleUnit);
                 bundle.putSerializable("videos", (Serializable) videos);
@@ -87,7 +89,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
     }
 
-    public void filterList(List<VideoRelatedDetails> filterlist) {
+    public void filterList(List<Video> filterlist) {
         videos = filterlist;
         notifyDataSetChanged();
     }

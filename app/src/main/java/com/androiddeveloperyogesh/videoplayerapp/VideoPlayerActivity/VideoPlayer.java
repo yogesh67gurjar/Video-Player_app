@@ -3,56 +3,56 @@ package com.androiddeveloperyogesh.videoplayerapp.VideoPlayerActivity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.androiddeveloperyogesh.videoplayerapp.Models.VideoRelatedDetails;
+import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityVideoPlayerBinding;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.ui.DefaultTimeBar;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 public class VideoPlayer extends AppCompatActivity {
     ActivityVideoPlayerBinding binding;
     //    PlayerView playerView;
     SimpleExoPlayer player;
 
+    int[] scales;
+
     String duration;
+    String name;
     long position = 0;
-    VideoRelatedDetails video;
-    List<VideoRelatedDetails> videos;
+    Video video;
+    List<Video> videos;
     DefaultDataSourceFactory defaultDataSourceFactory;
     ConcatenatingMediaSource concatenatingMediaSource;
+
+    int selectedPosition;
     MediaSource mediaSource;
 
-//    DefaultTimeBar timeBar;
     boolean rotationFlag = false;
 
     Player.Listener listener;
@@ -62,15 +62,22 @@ public class VideoPlayer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityVideoPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        scales = new int[3];
+
+
+        scales[0] = C.VIDEO_SCALING_MODE_DEFAULT;
+        scales[1] = C.VIDEO_SCALING_MODE_SCALE_TO_FIT;
+        scales[2] = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
 //        playerView = findViewById(R.id.exoPlayerView);
 
-        video = (VideoRelatedDetails) getIntent().getExtras().getSerializable("video");
+        video = (Video) getIntent().getExtras().getSerializable("video");
         duration = getIntent().getExtras().getString("duration");
-        videos = (List<VideoRelatedDetails>) getIntent().getExtras().getSerializable("videos");
+        videos = (List<Video>) getIntent().getExtras().getSerializable("videos");
+        name = getIntent().getExtras().getString("name");
 
         Log.d("ggggggggggg", String.valueOf(videos.size()));
 
@@ -89,21 +96,32 @@ public class VideoPlayer extends AppCompatActivity {
 
         concatenatingMediaSource = new ConcatenatingMediaSource();
 
-        String path = video.getPath();
-        Uri uri = Uri.parse(path);
-        mediaSource = new ProgressiveMediaSource
-                .Factory(defaultDataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(uri));
+        for (int i = 0; i < videos.size(); i++) {
 
-        concatenatingMediaSource.addMediaSource(mediaSource);
+            if (Objects.equals(videos.get(i).getDisplayName(), name)) {
+                selectedPosition = i;
+            }
 
-        player.prepare(concatenatingMediaSource);
-        player.seekTo((int) position, C.TIME_UNSET);
+            String path = videos.get(i).getPath();
+            Uri uri = Uri.parse(path);
+
+            mediaSource = new ProgressiveMediaSource.Factory(defaultDataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(uri));
+            concatenatingMediaSource.addMediaSource(mediaSource);
+        }
+
+        player.addMediaSource(concatenatingMediaSource);
+
+        player.prepare();
+        player.seekTo((int) selectedPosition, C.TIME_UNSET);
 
         binding.exoPlayerView.setPlayer(player);
         binding.exoPlayerView.setKeepScreenOn(true);
 
         player.setPlayWhenReady(true);
+
+//        AspectRatioFrameLayout aspectRatioFrameLayout = binding.exoPlayerView.findViewById(R.id.exo_content_frame);
+
 
         player.addListener(new Player.Listener() {
             @Override
@@ -115,23 +133,29 @@ public class VideoPlayer extends AppCompatActivity {
 
         ImageView playPauseBtn = binding.exoPlayerView.findViewById(R.id.exoPlayerPlayPause);
 
-//        binding.exoPlayerView.setUseController(false); // Disable the default controller
-//        binding.exoPlayerView.setControllerShowTimeoutMs(0); // Disable the default controller timeout
-//        binding.exoPlayerView.setOverlayFrameLayout(controllerView);
-
-
         TextView title = binding.exoPlayerView.findViewById(R.id.exoPlayerTitle);
         title.setText(video.getTitle());
 
         ImageView backBtn = binding.exoPlayerView.findViewById(R.id.exoPlayerBack);
 
-        TextView totalDuration = binding.exoPlayerView.findViewById(R.id.exoPlayerDuration);
-        totalDuration.setText(duration);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+
+        ImageView scaling = binding.exoPlayerView.findViewById(R.id.exoPlayerScaling);
+        scaling.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(VideoPlayer.this, "dfdgfdgfd", Toast.LENGTH_SHORT).show();
+                // Generate random integers in range 0 to 999
+                Random rand = new Random();
+                int num = rand.nextInt(3);
+                player.setVideoScalingMode(scales[num]);
             }
         });
 
@@ -168,21 +192,20 @@ public class VideoPlayer extends AppCompatActivity {
 
         LottieAnimationView progress = binding.exoPlayerView.findViewById(R.id.lottieLoading);
 
+        ImageView next = binding.exoPlayerView.findViewById(R.id.exoPlayerNext);
+        ImageView previous = binding.exoPlayerView.findViewById(R.id.exoPlayerPrevious);
 
-        ImageView forward = binding.exoPlayerView.findViewById(R.id.exoPlayerForward);
-        ImageView rewind = binding.exoPlayerView.findViewById(R.id.exoPlayerRewind);
-
-        forward.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                player.seekForward();
+                playNextVideo();
             }
         });
 
-        rewind.setOnClickListener(new View.OnClickListener() {
+        previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                player.seekBack();
+                playPreviousVideo();
             }
         });
 
@@ -196,8 +219,8 @@ public class VideoPlayer extends AppCompatActivity {
                     Log.d("jjjjjjjjj", "me hu me hu");
                     updateTimeBar();
                 } else if (playbackState == Player.STATE_ENDED) {
-                    Toast.makeText(VideoPlayer.this, "video khatam", Toast.LENGTH_SHORT).show();
-                    finish();
+                    playNextVideo();
+
                 }
             }
 
@@ -207,6 +230,27 @@ public class VideoPlayer extends AppCompatActivity {
             }
         };
         player.addListener(listener);
+    }
+
+    private void playPreviousVideo() {
+        int currentWindowIndex = player.getCurrentWindowIndex();
+        if (currentWindowIndex != 0) {
+            // Play the next video in the list
+            player.seekTo(currentWindowIndex - 1, 0);
+            player.setPlayWhenReady(true);
+        }
+    }
+
+    private void playNextVideo() {
+        int currentWindowIndex = player.getCurrentWindowIndex();
+        if (currentWindowIndex < concatenatingMediaSource.getSize() - 1) {
+            // Play the next video in the list
+            player.seekTo(currentWindowIndex + 1, 0);
+            player.setPlayWhenReady(true);
+        } else {
+            // No more videos to play, finish the activity or handle as needed
+            finish();
+        }
     }
 
     private void updateTimeBar() {
@@ -238,5 +282,19 @@ public class VideoPlayer extends AppCompatActivity {
             player.release();
             player = null;
         }
+    }
+
+    public String timeConversion(long value) {
+        String videoTime;
+        int duration = (int) value;
+        int hrs = (duration / 3600000);
+        int mins = (duration / 60000) % 60000;
+        int secs = (duration % 60000) / 1000;
+        if (hrs > 0) {
+            videoTime = String.format("%02d:%02d:%02d", hrs, mins, secs);
+        } else {
+            videoTime = String.format("%02d:%02d", mins, secs);
+        }
+        return videoTime;
     }
 }
