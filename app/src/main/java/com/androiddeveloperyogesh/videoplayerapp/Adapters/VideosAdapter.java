@@ -1,13 +1,22 @@
 package com.androiddeveloperyogesh.videoplayerapp.Adapters;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -29,12 +38,15 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
     Intent intent;
     List<Video> videos;
     FragmentManager fragmentManager;
+    String folderPath;
+    String folderName;
 
-    public VideosAdapter(Context context, FragmentManager fragmentManager, List<Video> videos) {
+    public VideosAdapter(Context context, FragmentManager fragmentManager, List<Video> videos, String folderPath,String folderName) {
+        this.folderName=folderName;
+        this.folderPath = folderPath;
         this.context = context;
         this.fragmentManager = fragmentManager;
         this.videos = videos;
-
     }
 
     @NonNull
@@ -56,35 +68,32 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
         holder.duration.setText(timeConversion((long) milliSeconds));
         Glide.with(context).load(new File(singleUnit.getPath())).placeholder(R.drawable.img_thumbnail).into(holder.thumbnail);
 
-        holder.threeDots.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.threeDots.setOnClickListener(v -> {
 
-                Bundle bundle = new Bundle();
-                bundle.putString("name", singleUnit.getDisplayName());
-                bundle.putString("thumbnail", singleUnit.getPath());
-                bundle.putSerializable("video", singleUnit);
-                bundle.putSerializable("videos", (Serializable) videos);
+            Bundle bundle = new Bundle();
+            bundle.putString("name", singleUnit.getDisplayName());
+            bundle.putString("thumbnail", singleUnit.getPath());
+            bundle.putSerializable("video", singleUnit);
+            bundle.putString("folderPath", folderPath);
+            bundle.putString("folderName",folderName);
+            bundle.putSerializable("videos", (Serializable) videos);
 
-                VideoThreeDot bottomSheet = new VideoThreeDot(context);
-                bottomSheet.setArguments(bundle);
-                bottomSheet.show(fragmentManager, bottomSheet.getTag());
-            }
+            VideoThreeDot bottomSheet = new VideoThreeDot(context);
+            bottomSheet.setArguments(bundle);
+            bottomSheet.show(fragmentManager, bottomSheet.getTag());
+
         });
 
-        holder.card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(context, VideoPlayer.class);
+        holder.card.setOnClickListener(v -> {
+            intent = new Intent(context, VideoPlayer.class);
 
-                Bundle bundle = new Bundle();
-                bundle.putString("name", singleUnit.getDisplayName());
-                bundle.putString("duration", holder.duration.getText().toString());
-                bundle.putSerializable("video", singleUnit);
-                bundle.putSerializable("videos", (Serializable) videos);
-                intent.putExtras(bundle);
-                context.startActivity(intent);
-            }
+            Bundle bundle = new Bundle();
+            bundle.putString("name", singleUnit.getDisplayName());
+            bundle.putString("duration", holder.duration.getText().toString());
+            bundle.putSerializable("video", singleUnit);
+            bundle.putSerializable("videos", (Serializable) videos);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
         });
 
     }

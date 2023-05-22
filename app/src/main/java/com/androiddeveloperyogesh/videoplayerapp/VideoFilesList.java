@@ -50,7 +50,6 @@ public class VideoFilesList extends AppCompatActivity {
         });
 
 
-
         binding.videoSearchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -67,17 +66,16 @@ public class VideoFilesList extends AppCompatActivity {
         binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                showVideos(folderName);
+                showVideos(folderPath);
                 binding.swipeRefreshFoldersLayout.setRefreshing(false);
             }
         });
     }
 
 
-
-    private void showVideos(String folderPath) {
+    public void showVideos(String folderPath) {
         videos = getAllVideos(folderPath);
-        videosAdapter = new VideosAdapter(this, fragmentManager, videos);
+        videosAdapter = new VideosAdapter(this, fragmentManager, videos, folderPath, folderName);
         binding.rvVideos.setAdapter(videosAdapter);
         binding.rvVideos.setLayoutManager(new LinearLayoutManager(this));
     }

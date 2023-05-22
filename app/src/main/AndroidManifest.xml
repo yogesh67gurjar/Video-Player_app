@@ -30,12 +30,15 @@
 
         <activity
             android:name=".VideoPlayerActivity.VideoPlayer"
-            android:configChanges="orientation|screenLayout|screenSize|uiMode"
-            android:exported="false" />
+            android:configChanges="orientation|screenLayout|screenSize|uiMode|layoutDirection"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true" />
 
         <activity
             android:name=".VideoFilesList"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
 
         <activity
             android:name=".Welcome.AllowPermissions"

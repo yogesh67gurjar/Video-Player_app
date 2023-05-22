@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:resize_mode="fit"
-        app:show_timeout="4000"
+        app:show_timeout="2000"
         app:use_controller="true" />
 
     <!--    app:resize_mode="fit"-->
