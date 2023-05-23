@@ -47,9 +47,7 @@ public class MainActivity extends AppCompatActivity {
     // isme hr ek string folder ka path hoga
     FoldersAdapter foldersAdapter;
     public static final int STORAGE = 11;
-
     FragmentManager fragmentManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,80 +143,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void loadLocale() {
-        SharedPreferences sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
-        if (sharedPreferences.contains("language")) {
-            String lang = sharedPreferences.getString("language", "");
-            if (lang.equalsIgnoreCase("hi")) {
-                changeLanguage("hindi");
-            } else if (lang.equalsIgnoreCase("")) {
-                changeLanguage("english");
-            }
-        }
-    }
-
-    private void filter(String text) {
-        List<String> filteredlist = new ArrayList<String>();
-
-        for (String item : folders) {
-            if (item.toLowerCase().contains(text.toLowerCase())) {
-                filteredlist.add(item);
-            }
-        }
-        if (filteredlist.isEmpty()) {
-            Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show();
-        } else {
-            foldersAdapter.filterList(filteredlist);
-        }
-    }
-
-    // right side me 3 dots wala menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_option_menu, menu);
-        return true;
-    }
-
-    // ye usi menu ka listener
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id;
-        id = item.getItemId();
-
-        if (id == R.id.sortBy) {
-            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (!Environment.isExternalStorageManager()) {
-                requestRuntimePermissionFunc("manageStorage");
-            } else {
-                showFolders();
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                requestRuntimePermissionFunc("storage");
-            } else {
-                showFolders();
-            }
-        }
-
-        binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                showFolders();
-                binding.swipeRefreshFoldersLayout.setRefreshing(false);
-            }
-        });
-    }
-
-
     private void showFolders() {
         fragmentManager = getSupportFragmentManager();
         videos = getFoldersFunc();
@@ -281,6 +205,82 @@ public class MainActivity extends AppCompatActivity {
         }
         return videoList;
     }
+
+
+    private void loadLocale() {
+        SharedPreferences sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
+        if (sharedPreferences.contains("language")) {
+            String lang = sharedPreferences.getString("language", "");
+            if (lang.equalsIgnoreCase("hi")) {
+                changeLanguage("hindi");
+            } else if (lang.equalsIgnoreCase("")) {
+                changeLanguage("english");
+            }
+        }
+    }
+
+    private void filter(String text) {
+        List<String> filteredlist = new ArrayList<String>();
+
+        for (String item : folders) {
+            if (item.toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(item);
+            }
+        }
+        if (filteredlist.isEmpty()) {
+//            Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show();
+        } else {
+            foldersAdapter.filterList(filteredlist);
+        }
+    }
+
+    // right side me 3 dots wala menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_option_menu, menu);
+        return true;
+    }
+
+    // ye usi menu ka listener
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id;
+        id = item.getItemId();
+
+        if (id == R.id.sortBy) {
+            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showFolders();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!Environment.isExternalStorageManager()) {
+                requestRuntimePermissionFunc("manageStorage");
+            } else {
+                showFolders();
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                requestRuntimePermissionFunc("storage");
+            } else {
+                showFolders();
+            }
+        }
+
+        binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                showFolders();
+                binding.swipeRefreshFoldersLayout.setRefreshing(false);
+            }
+        });
+    }
+
 
     private void requestRuntimePermissionFunc(String permissionName) {
         if (permissionName.equals("manageStorage")) {

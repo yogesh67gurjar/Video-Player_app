@@ -52,28 +52,6 @@ public class AllowPermissions extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (Environment.isExternalStorageManager()) {
-                // Permission is granted
-                Log.d("manageStorage", "yes yes yes yes ");
-                intent = new Intent(AllowPermissions.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(AllowPermissions.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Log.d("storage", "yes yes yes yes ");
-                intent = new Intent(AllowPermissions.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
-    }
-
     private void requestRuntimePermissionFunc(String permissionName) {
         if (permissionName.equals("manageStorage")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -118,7 +96,6 @@ public class AllowPermissions extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -147,4 +124,33 @@ public class AllowPermissions extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //  jb apn permission compat se return aenge to direct apni sctivity call ho jae permission check kr k
+        //  apn ko kisi button ko click na krna pde aage jaane k liye
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Environment.isExternalStorageManager()) {
+                // Permission is granted
+                Log.d("manageStorage", "yes yes yes yes ");
+                intent = new Intent(AllowPermissions.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(AllowPermissions.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.d("storage", "yes yes yes yes ");
+                intent = new Intent(AllowPermissions.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+    }
+
+
+
+
+
 }

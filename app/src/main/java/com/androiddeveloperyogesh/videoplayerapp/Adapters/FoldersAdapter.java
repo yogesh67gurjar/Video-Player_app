@@ -37,6 +37,19 @@ public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFol
         this.fragmentManager = fragmentManager;
         this.videos = videos;
         this.folders = folders;
+
+        for (Video video : videos) {
+            Log.d("videosMili   ", video.getId() + "  " + video.getTitle() + "  " + video.getDisplayName() + "  " + video.getSize() + "  " + video.getDuration() + "  " + video.getPath() + "  " + video.getDateAdded());
+            //  is type se logs dikhenge
+
+            //  1000002296 (id)
+            //  VID_20220928_183058 (title)
+            //  VID_20220928_183058.mp4 (displayName)
+            //  40070587 (size)
+            //  19050 (duration)
+            //  /storage/emulated/0/DCIM/OpenCamera/VID_20220928_183058.mp4 (path)
+            //  1664370058 (dateAdded)
+        }
     }
 
     @NonNull
@@ -51,19 +64,16 @@ public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFol
     public void onBindViewHolder(@NonNull FoldersAdapter.VideoFolderViewHolder holder, int position) {
 
 
+        String folderPath = folders.get(position);
+        holder.folderPathTv.setText(folderPath);
         //  jese apne paas current folder ka path he
         //  Android/data/videos/whatsapp/whatsappvideos/private
         //  ab iski size he 52 to apn ne last index liya to size bni 45
         //  to isme se apn last index utha rhe he and wha se ek substring bna rhe he like this
         //  private
-
-        String folderPath = folders.get(position);
-        holder.folderPathTv.setText(folderPath);
-
         int indexPathIndex = folderPath.lastIndexOf("/");
         String folderName = folderPath.substring(indexPathIndex + 1);
         holder.folderNameTv.setText(folderName);
-
 
         holder.noOfFilesTv.setText(getVideosCount(folderPath) + " Videos");
 
@@ -71,7 +81,6 @@ public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFol
             @Override
             public void onClick(View v) {
                 intent = new Intent(context, VideoFilesList.class);
-
                 intent.putExtra("folderName", folderName);
                 intent.putExtra("folderPath", folderPath);
                 context.startActivity(intent);
