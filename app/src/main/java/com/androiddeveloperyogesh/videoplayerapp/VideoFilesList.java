@@ -23,9 +23,7 @@ public class VideoFilesList extends AppCompatActivity {
     ActivityVideoFilesListBinding binding;
     VideosAdapter videosAdapter;
     List<Video> videos;
-
     String folderName, folderPath;
-
     FragmentManager fragmentManager;
 
     @Override
@@ -34,13 +32,30 @@ public class VideoFilesList extends AppCompatActivity {
         binding = ActivityVideoFilesListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         fragmentManager = getSupportFragmentManager();
+
+        // initialize list of videos
         videos = new ArrayList<>();
+
+        // get from intent
+        // folder jiska naam apn ko intent se mila he uski saari videos apn ko available ho jaegi in recyclerview
         folderName = getIntent().getStringExtra("folderName");
         folderPath = getIntent().getStringExtra("folderPath");
+
+        // toolbar / action bar
         setSupportActionBar(binding.toolbar);
-//        getSupportActionBar().setTitle(folderName);
         getSupportActionBar().setTitle("");
+
+        // by default bhi showVideos
         showVideos(folderPath);
+
+        // swipe down krne pe bhi showVideos
+        binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                showVideos(folderPath);
+                binding.swipeRefreshFoldersLayout.setRefreshing(false);
+            }
+        });
 
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,8 +63,6 @@ public class VideoFilesList extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-
         binding.videoSearchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -60,14 +73,6 @@ public class VideoFilesList extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 filter(newText);
                 return false;
-            }
-        });
-
-        binding.swipeRefreshFoldersLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                showVideos(folderPath);
-                binding.swipeRefreshFoldersLayout.setRefreshing(false);
             }
         });
     }
@@ -81,7 +86,6 @@ public class VideoFilesList extends AppCompatActivity {
     }
 
     private List<Video> getAllVideos(String folderPath) {
-
         List<Video> videos = new ArrayList<>();
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Video.Media.DATA + " LIKE ? AND " + MediaStore.Video.Media.DATA + " NOT LIKE ?";
@@ -116,7 +120,6 @@ public class VideoFilesList extends AppCompatActivity {
             }
         }
         if (filteredlist.isEmpty()) {
-            Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show();
         } else {
             videosAdapter.filterList(filteredlist);
         }

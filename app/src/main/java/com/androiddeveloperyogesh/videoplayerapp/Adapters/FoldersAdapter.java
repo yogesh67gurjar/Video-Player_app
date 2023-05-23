@@ -64,27 +64,24 @@ public class FoldersAdapter extends RecyclerView.Adapter<FoldersAdapter.VideoFol
     public void onBindViewHolder(@NonNull FoldersAdapter.VideoFolderViewHolder holder, int position) {
 
 
-        String folderPath = folders.get(position);
-        holder.folderPathTv.setText(folderPath);
+        String singleUnitPath = folders.get(position);
+        holder.folderPathTv.setText(singleUnitPath);    //  Android/data/videos/whatsapp/whatsappvideos/private
         //  jese apne paas current folder ka path he
         //  Android/data/videos/whatsapp/whatsappvideos/private
         //  ab iski size he 52 to apn ne last index liya to size bni 45
         //  to isme se apn last index utha rhe he and wha se ek substring bna rhe he like this
         //  private
-        int indexPathIndex = folderPath.lastIndexOf("/");
-        String folderName = folderPath.substring(indexPathIndex + 1);
-        holder.folderNameTv.setText(folderName);
+        int indexPathIndex = singleUnitPath.lastIndexOf("/");
+        String folderName = singleUnitPath.substring(indexPathIndex + 1);
+        holder.folderNameTv.setText(folderName);    //  private
 
-        holder.noOfFilesTv.setText(getVideosCount(folderPath) + " Videos");
+        holder.noOfFilesTv.setText(getVideosCount(singleUnitPath) + " Videos"); //  605 Videos
 
-        holder.rv_card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(context, VideoFilesList.class);
-                intent.putExtra("folderName", folderName);
-                intent.putExtra("folderPath", folderPath);
-                context.startActivity(intent);
-            }
+        holder.rv_card.setOnClickListener(v -> {
+            intent = new Intent(context, VideoFilesList.class);
+            intent.putExtra("folderName", folderName);
+            intent.putExtra("folderPath", singleUnitPath);
+            context.startActivity(intent);
         });
     }
 

@@ -184,21 +184,21 @@
                 android:src="@drawable/ic_rewind" />
 
             <ImageView
-                android:id="@+id/exoPlayerPrevious"
+                android:id="@+id/exo_prev"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_previous" />
 
             <ImageView
-                android:id="@+id/exoPlayerPlayPause"
+                android:id="@+id/exo_play_pause"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_pause" />
 
             <ImageView
-                android:id="@+id/exoPlayerNext"
+                android:id="@+id/exo_next"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"

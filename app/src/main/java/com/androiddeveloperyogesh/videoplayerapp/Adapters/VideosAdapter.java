@@ -59,17 +59,33 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
     @Override
     public void onBindViewHolder(@NonNull VideosAdapter.VideosViewHolder holder, int position) {
-        Video singleUnit = videos.get(position);
-        holder.title.setText(singleUnit.getDisplayName());
-        String strSize = singleUnit.getSize();
 
+        //  1000002296 (id)
+        //  VID_20220928_183058 (title)
+        //  VID_20220928_183058.mp4 (displayName)
+        //  40070587 (size)
+        //  19050 (duration)
+        //  /storage/emulated/0/DCIM/OpenCamera/VID_20220928_183058.mp4 (path)
+        //  1664370058 (dateAdded)
+
+        // single video
+        Video singleUnit = videos.get(position);
+
+        // video ka naam
+        holder.title.setText(singleUnit.getDisplayName());
+
+        // video ka size
+        String strSize = singleUnit.getSize();
         holder.size.setText(android.text.format.Formatter.formatFileSize(context, Long.parseLong(strSize)));
+
+        // video ka duration
         double milliSeconds = Double.parseDouble(singleUnit.getDuration());
         holder.duration.setText(timeConversion((long) milliSeconds));
+
+        // video ka thumbnail
         Glide.with(context).load(new File(singleUnit.getPath())).placeholder(R.drawable.img_thumbnail).into(holder.thumbnail);
 
         holder.threeDots.setOnClickListener(v -> {
-
             Bundle bundle = new Bundle();
             bundle.putString("name", singleUnit.getDisplayName());
             bundle.putString("thumbnail", singleUnit.getPath());
@@ -88,11 +104,11 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
             intent = new Intent(context, VideoPlayer.class);
 
             Bundle bundle = new Bundle();
-            bundle.putString("name", singleUnit.getDisplayName());
-            bundle.putString("duration", holder.duration.getText().toString());
             bundle.putSerializable("video", singleUnit);
             bundle.putSerializable("videos", (Serializable) videos);
+
             intent.putExtras(bundle);
+
             context.startActivity(intent);
         });
 
@@ -126,7 +142,6 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
         ImageView thumbnail, threeDots;
         TextView duration, title, size;
         CardView card;
-
         public VideosViewHolder(@NonNull View itemView) {
             super(itemView);
             card = itemView.findViewById(R.id.rv_video_card);

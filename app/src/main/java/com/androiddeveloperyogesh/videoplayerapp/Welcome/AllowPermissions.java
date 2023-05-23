@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +39,15 @@ public class AllowPermissions extends AppCompatActivity {
         binding = ActivityAllowPermissionsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.bg.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg_leaf));
+        binding.bg.start();
+        binding.bg.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+            }
+        });
+
         binding.btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +60,30 @@ public class AllowPermissions extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //  jb apn permission compat se return aenge to direct apni sctivity call ho jae permission check kr k
+        //  apn ko kisi button ko click na krna pde aage jaane k liye
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Environment.isExternalStorageManager()) {
+                // Permission is granted
+                Log.d("manageStorage", "yes yes yes yes ");
+                intent = new Intent(AllowPermissions.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(AllowPermissions.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.d("storage", "yes yes yes yes ");
+                intent = new Intent(AllowPermissions.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
     }
 
     private void requestRuntimePermissionFunc(String permissionName) {
@@ -125,29 +159,7 @@ public class AllowPermissions extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //  jb apn permission compat se return aenge to direct apni sctivity call ho jae permission check kr k
-        //  apn ko kisi button ko click na krna pde aage jaane k liye
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (Environment.isExternalStorageManager()) {
-                // Permission is granted
-                Log.d("manageStorage", "yes yes yes yes ");
-                intent = new Intent(AllowPermissions.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(AllowPermissions.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Log.d("storage", "yes yes yes yes ");
-                intent = new Intent(AllowPermissions.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
-    }
 
 
 

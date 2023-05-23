@@ -42,11 +42,11 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
+    public static final int STORAGE = 11;
     List<Video> videos;
     List<String> folders;
     // isme hr ek string folder ka path hoga
     FoldersAdapter foldersAdapter;
-    public static final int STORAGE = 11;
     FragmentManager fragmentManager;
 
     @Override
@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return videoList;
     }
+
 
 
     private void loadLocale() {
