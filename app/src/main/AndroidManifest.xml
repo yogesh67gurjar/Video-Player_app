@@ -45,10 +45,10 @@
             android:name=".VideoPlayerActivity.VideoPlayer"
             android:configChanges="orientation|screenLayout|screenSize|uiMode|layoutDirection"
             android:exported="false"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true" />
+            />
 
-
+<!--        android:resizeableActivity="true"-->
+<!--        android:supportsPictureInPicture="true"-->
         <!--        parentActivityName means agr user back krega to apn is activity me jaenge-->
         <activity
             android:name=".VideoFilesList"

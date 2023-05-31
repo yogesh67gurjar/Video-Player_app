@@ -51,7 +51,7 @@ public class VideoPlayer extends AppCompatActivity {
 
     Video video;
     List<Video> videos;
-
+    ImageView playPauseBtn;
 
     SimpleExoPlayer player;
     // player jo ki poora management dekhega us view k liye jisme video play hoga ya dikhega
@@ -102,7 +102,7 @@ public class VideoPlayer extends AppCompatActivity {
         LottieAnimationView buffering = binding.exoPlayerView.findViewById(R.id.lottieLoading);
         ImageView next = binding.exoPlayerView.findViewById(R.id.exo_next);
         ImageView previous = binding.exoPlayerView.findViewById(R.id.exo_prev);
-        ImageView playPauseBtn = binding.exoPlayerView.findViewById(R.id.exo_play_pause);
+         playPauseBtn = binding.exoPlayerView.findViewById(R.id.exo_play_pause);
         TextView title = binding.exoPlayerView.findViewById(R.id.exoPlayerTitle);
         ImageView backBtn = binding.exoPlayerView.findViewById(R.id.exoPlayerBack);
         ImageView scaling = binding.exoPlayerView.findViewById(R.id.exoPlayerScaling);
@@ -252,38 +252,41 @@ public class VideoPlayer extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onUserLeaveHint() {
-        //  ye call hoga jb user home button dabata he ya phir doore app me chle jata he
-        super.onUserLeaveHint();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            enterPictureInPictureMode();
+    // pip
+//    @Override
+//    protected void onUserLeaveHint() {
+//        //  ye call hoga jb user home button dabata he ya phir doore app me chle jata he
+//        super.onUserLeaveHint();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            enterPictureInPictureMode();
+//
+////            PictureInPictureParams.Builder paramsBuilder = new PictureInPictureParams.Builder();
+////            Rational aspectRatio = new Rational(2, 1);
+////            paramsBuilder.setAspectRatio(aspectRatio);
+////            enterPictureInPictureMode(paramsBuilder.build());
+//        }
+//    }
 
-//            PictureInPictureParams.Builder paramsBuilder = new PictureInPictureParams.Builder();
-//            Rational aspectRatio = new Rational(2, 1);
-//            paramsBuilder.setAspectRatio(aspectRatio);
-//            enterPictureInPictureMode(paramsBuilder.build());
-        }
-    }
+    // pip
+//    @Override
+//    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+//            if (!isInPictureInPictureMode) {
+//                // The activity exited PiP mode
+//                if (player != null && player.isPlaying()) {
+//
+//                }
+//            }
+//        }
+//    }
 
-    @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
-            if (!isInPictureInPictureMode) {
-                // The activity exited PiP mode
-                if (player != null && player.isPlaying()) {
-
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Handle the configuration changes when the activity is in PiP mode.
-    }
+//    // pip
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        // Handle the configuration changes when the activity is in PiP mode.
+//    }
 
     private void playPreviousVideo() {
         //  getCurrentWindowIndex se apn ko position pta chl jaegi ki kaha pr he apn abhi concatenatingMediaSource me
@@ -326,32 +329,58 @@ public class VideoPlayer extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if(player.isPlaying())
+        {
+            player.getPlaybackState();
+            player.pause();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-
         player.setPlayWhenReady(true);
         player.getPlaybackState();
-
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // agar video play ho rhi he to sb khatam kr do
-        if (player.isPlaying()) {
-            player.stop();
-            player.release();
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        // jb user back button dabae to stop kr do video playback ko
-        if (player.isPlaying()) {
-            player.stop();
-        }
-    }
+    //    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        if (player.isPlaying()) {
+//            player.stop();
+//            player.release();
+//        }
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        player.setPlayWhenReady(true);
+//        player.getPlaybackState();
+//
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        // agar video play ho rhi he to sb khatam kr do
+//        if (player.isPlaying()) {
+//            player.stop();
+//            player.release();
+//        }
+//    }
+//
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        // jb user back button dabae to stop kr do video playback ko
+//        if (player.isPlaying()) {
+//            player.stop();
+//        }
+//    }
 
 
 }
