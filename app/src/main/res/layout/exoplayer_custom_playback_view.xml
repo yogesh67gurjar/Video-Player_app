@@ -84,29 +84,6 @@
             app:lottie_rawRes="@raw/aniki_hamster" />
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/playlistCard"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginHorizontal="15dp"
-            android:visibility="gone"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolBar">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/playlistRecyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="5dp"
-                tools:listitem="@layout/rv_playlist" />
-
-
-        </androidx.cardview.widget.CardView>
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/progress"
             android:layout_width="match_parent"

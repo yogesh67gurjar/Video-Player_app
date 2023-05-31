@@ -43,12 +43,12 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     public void onBindViewHolder(@NonNull PlaylistAdapter.PlaylistViewHolder holder, int position) {
         Video singleUnit = videos.get(position);
 
-//        Toast.makeText(context, pos + "  " + position, Toast.LENGTH_SHORT).show();
-//        if (videos.get(i).getDisplayName().equals(singleUnit.getDisplayName())) {
-//            holder.rv_playlist_title.setTextColor(Color.parseColor("#006400"));
-//            holder.rv_playlist_title.setTypeface(Typeface.DEFAULT_BOLD);
-//            Log.d("positionpositiojs", singleUnit.getDisplayName() + " ,, $ ,, " + videos.get(i).getDisplayName());
-//        }
+//        Toast.makeText(context,  "  " + position, Toast.LENGTH_SHORT).show();
+        if (videos.get(i).getDisplayName().equals(singleUnit.getDisplayName())) {
+            holder.rv_playlist_title.setTextColor(Color.parseColor("#006400"));
+            holder.rv_playlist_title.setTypeface(Typeface.DEFAULT_BOLD);
+            Log.d("positionpositiojs", singleUnit.getDisplayName() + " ,, $ ,, " + videos.get(i).getDisplayName());
+        }
 
         holder.rv_playlist_title.setText(singleUnit.getDisplayName());
     }

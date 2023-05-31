@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +23,8 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.PlaylistAdapter;
+import com.androiddeveloperyogesh.videoplayerapp.BottomSheet.Playlist;
+import com.androiddeveloperyogesh.videoplayerapp.BottomSheet.VideoThreeDot;
 import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityVideoPlayerBinding;
@@ -37,6 +40,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +49,6 @@ public class VideoPlayer extends AppCompatActivity {
 
     // currently jo bhi video play ho rhi he uski int me position kya he List<Videos>videos me
     int playlistPos;
-    boolean playlistFlag = false;
     PlaylistAdapter playlistAdapter;
     // playlist recyclerview related
 
@@ -70,12 +73,15 @@ public class VideoPlayer extends AppCompatActivity {
     boolean zoomFlag = true;
     int selectedPosition;
 
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityVideoPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        fragmentManager = getSupportFragmentManager();
 
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -87,12 +93,6 @@ public class VideoPlayer extends AppCompatActivity {
         playVideo();
     }
 
-    private void setPlaylist(int pos) {
-        playlistAdapter = new PlaylistAdapter(VideoPlayer.this, videos, pos);
-        RecyclerView playlistRecyclerView = binding.exoPlayerView.findViewById(R.id.playlistRecyclerview);
-        playlistRecyclerView.setAdapter(playlistAdapter);
-        playlistRecyclerView.setLayoutManager(new LinearLayoutManager(VideoPlayer.this));
-    }
 
     private void playVideo() {
         //  apn ne exoplayer ka jo view bnaya he in xml
@@ -102,13 +102,12 @@ public class VideoPlayer extends AppCompatActivity {
         LottieAnimationView buffering = binding.exoPlayerView.findViewById(R.id.lottieLoading);
         ImageView next = binding.exoPlayerView.findViewById(R.id.exo_next);
         ImageView previous = binding.exoPlayerView.findViewById(R.id.exo_prev);
-         playPauseBtn = binding.exoPlayerView.findViewById(R.id.exo_play_pause);
+        playPauseBtn = binding.exoPlayerView.findViewById(R.id.exo_play_pause);
         TextView title = binding.exoPlayerView.findViewById(R.id.exoPlayerTitle);
         ImageView backBtn = binding.exoPlayerView.findViewById(R.id.exoPlayerBack);
         ImageView scaling = binding.exoPlayerView.findViewById(R.id.exoPlayerScaling);
         ImageView rotate = binding.exoPlayerView.findViewById(R.id.exoPlayerRotate);
         ImageView playlist = binding.exoPlayerView.findViewById(R.id.exoPlayerPlaylist);
-        CardView playlistCard = binding.exoPlayerView.findViewById(R.id.playlistCard);
         ConstraintLayout rootLayout = binding.exoPlayerView.findViewById(R.id.rootLayout);
 
         // yha apn ne exoplayer ko initialize kr diya ki isi same activity me apn he and isko use krna chahte he
@@ -161,27 +160,12 @@ public class VideoPlayer extends AppCompatActivity {
 
         // for playlist recyclerview
         playlistPos = selectedPosition;
-        setPlaylist(playlistPos);
         //  to control visibility of playlist dropdown
         playlist.setOnClickListener(v -> {
-            if (playlistFlag) {
-                playlistCard.setVisibility(View.GONE);
-                playlistFlag = false;
-            } else {
-                playlistFlag = true;
-                playlistCard.setVisibility(View.VISIBLE);
-            }
-        });
 
-        //  to hide playlist dropdown
-        rootLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (playlistFlag) {
-                    playlistCard.setVisibility(View.GONE);
-                    playlistFlag = false;
-                }
-            }
+
+            Playlist bottomSheet = new Playlist(VideoPlayer.this, videos, playlistPos);
+            bottomSheet.show(fragmentManager, bottomSheet.getTag());
         });
 
 
@@ -298,7 +282,6 @@ public class VideoPlayer extends AppCompatActivity {
             player.setPlayWhenReady(true);
 
             //  playlistRecyclerview set kr do phir se qki position change hui he
-            setPlaylist(playlistPos);
         }
     }
 
@@ -312,7 +295,6 @@ public class VideoPlayer extends AppCompatActivity {
             player.setPlayWhenReady(true);
 
             //  playlistRecyclerview set kr do phir se qki position change hui he
-            setPlaylist(playlistPos);
         } else {
             // No more videos to play, finish the activity or handle as needed
             finish();
@@ -331,8 +313,7 @@ public class VideoPlayer extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(player.isPlaying())
-        {
+        if (player.isPlaying()) {
             player.getPlaybackState();
             player.pause();
         }
