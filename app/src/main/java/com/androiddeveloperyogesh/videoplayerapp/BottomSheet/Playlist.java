@@ -27,13 +27,16 @@ public class Playlist extends BottomSheetDialogFragment {
     Context context;
     List<Video> videos;
     int i;
+    String videoTitle;
 
 
-    public Playlist(Context context, List<Video> videos,int i) {
+    public Playlist(Context context, List<Video> videos, int i, String videoTitle) {
         this.context = context;
         this.videos = videos;
-        this.i=i;
+        this.i = i;
+        this.videoTitle = videoTitle;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,7 +44,7 @@ public class Playlist extends BottomSheetDialogFragment {
         binding = FragmentPlaylistBinding.inflate(inflater, container, false);
 
 
-        binding.playlistRecyclerview.setAdapter(new PlaylistAdapter(context, videos, i));
+        binding.playlistRecyclerview.setAdapter(new PlaylistAdapter(context, videos, i,videoTitle));
         binding.playlistRecyclerview.setLayoutManager(new LinearLayoutManager(context));
 
         return binding.getRoot();

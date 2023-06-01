@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="600dp"
-    android:background="#99000000"
+    android:layout_height="500dp"
+    android:background="#66000000"
     tools:context=".BottomSheet.Playlist">
 
     <androidx.recyclerview.widget.RecyclerView

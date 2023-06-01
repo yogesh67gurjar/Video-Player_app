@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void loadLocale() {
         SharedPreferences sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
         if (sharedPreferences.contains("language")) {
@@ -235,25 +234,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // right side me 3 dots wala menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_option_menu, menu);
-        return true;
-    }
-
-    // ye usi menu ka listener
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id;
-        id = item.getItemId();
-
-        if (id == R.id.sortBy) {
-            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onResume() {

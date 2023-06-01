@@ -1,14 +1,20 @@
 package com.androiddeveloperyogesh.videoplayerapp;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,6 +32,10 @@ public class VideoFilesList extends AppCompatActivity {
     String folderName, folderPath;
     FragmentManager fragmentManager;
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    String sortOrder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +43,7 @@ public class VideoFilesList extends AppCompatActivity {
         setContentView(binding.getRoot());
         fragmentManager = getSupportFragmentManager();
 
+        getShared();
         // initialize list of videos
         videos = new ArrayList<>();
 
@@ -77,6 +88,57 @@ public class VideoFilesList extends AppCompatActivity {
         });
     }
 
+    private void getShared() {
+        sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+    }
+
+    // right side me 3 dots wala menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.videos_option_menu, menu);
+        return true;
+    }
+
+    // ye upr wale menu ka listener
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id;
+        id = item.getItemId();
+
+        if (id == R.id.sortBy) {
+            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(VideoFilesList.this);
+            alertDialog.setTitle("SortBy");
+            alertDialog.setPositiveButton("Ok", (dialog, which) -> {
+                dialog.dismiss();
+                editor.apply();
+                finish();
+                startActivity(getIntent());
+            });
+            String[] sorts = new String[]{"Name (A-Z)", "Size (big-small)", "Date (new-old)", "Length (long-short)"};
+            alertDialog.setSingleChoiceItems(sorts, -1, (dialog, which) -> {
+                switch (which) {
+                    case 0:
+                        editor.putString("sort", "name");
+                        break;
+                    case 1:
+                        editor.putString("sort", "size");
+                        break;
+                    case 2:
+                        editor.putString("sort", "date");
+                        break;
+                    case 3:
+                        editor.putString("sort", "length");
+                        break;
+
+                }
+            });
+            alertDialog.create();
+            alertDialog.show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public void showVideos(String folderPath) {
         videos = getAllVideos(folderPath);
@@ -87,10 +149,35 @@ public class VideoFilesList extends AppCompatActivity {
 
     private List<Video> getAllVideos(String folderPath) {
         List<Video> videos = new ArrayList<>();
+
+        editor.putString("sort", "name");
+        editor.putString("sort", "size");
+        editor.putString("sort", "date");
+        editor.putString("sort", "length");
+
+        String sortValue = sharedPreferences.getString("sort", "abcd");
+
+
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+
+        if (sortValue.equals("name")) {
+            sortOrder = MediaStore.MediaColumns.DISPLAY_NAME + " ASC";
+        } else if (sortValue.equals("size")) {
+            sortOrder = MediaStore.MediaColumns.SIZE + " DESC";
+
+        } else if (sortValue.equals("date")) {
+            sortOrder = MediaStore.MediaColumns.DATE_ADDED + " DESC";
+
+        } else if (sortValue.equals("length")) {
+            sortOrder = MediaStore.MediaColumns.DURATION + " DESC";
+
+        } else {
+            sortOrder = MediaStore.MediaColumns.DISPLAY_NAME + " ASC";
+        }
+
         String selection = MediaStore.Video.Media.DATA + " LIKE ? AND " + MediaStore.Video.Media.DATA + " NOT LIKE ?";
         String[] selectionArgs = new String[]{"%" + folderPath + "/%", "%" + folderPath + "/%/%"};
-        Cursor cursor = getContentResolver().query(uri, null, selection, selectionArgs, null);
+        Cursor cursor = getContentResolver().query(uri, null, selection, selectionArgs, sortOrder);
         if (cursor != null && cursor.moveToNext()) {
             do {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));

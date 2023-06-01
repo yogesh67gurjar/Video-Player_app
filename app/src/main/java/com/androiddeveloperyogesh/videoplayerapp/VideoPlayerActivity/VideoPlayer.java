@@ -64,16 +64,16 @@ public class VideoPlayer extends AppCompatActivity {
     ConcatenatingMediaSource concatenatingMediaSource;
     // to ye int ka array he
     //    ConcatenatingMediaSource is a class provided by the ExoPlayer library that represents a media source that concatenates multiple media sources together. It allows you to create a single source that plays multiple media items sequentially, one after another.
-
     MediaSource mediaSource;
     // agr ye int he
     //    MediaSource is an interface provided by the ExoPlayer library that represents a source of media data. It serves as an abstraction for different types of media sources, such as progressive media files, adaptive streaming formats (e.g., DASH or HLS), or other custom media sources.
 
     boolean rotationFlag = false;
-    boolean zoomFlag = true;
+    int zoomFlag = 1;
     int selectedPosition;
 
     FragmentManager fragmentManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +109,8 @@ public class VideoPlayer extends AppCompatActivity {
         ImageView rotate = binding.exoPlayerView.findViewById(R.id.exoPlayerRotate);
         ImageView playlist = binding.exoPlayerView.findViewById(R.id.exoPlayerPlaylist);
         ConstraintLayout rootLayout = binding.exoPlayerView.findViewById(R.id.rootLayout);
+        ImageView unLock = binding.exoPlayerView.findViewById(R.id.exoPlayerUnLock);
+        ImageView lock = binding.exoPlayerView.findViewById(R.id.exoplayer_lock);
 
         // yha apn ne exoplayer ko initialize kr diya ki isi same activity me apn he and isko use krna chahte he
         player = new SimpleExoPlayer.Builder(VideoPlayer.this).build();
@@ -162,22 +164,25 @@ public class VideoPlayer extends AppCompatActivity {
         playlistPos = selectedPosition;
         //  to control visibility of playlist dropdown
         playlist.setOnClickListener(v -> {
-
-
-            Playlist bottomSheet = new Playlist(VideoPlayer.this, videos, playlistPos);
+            Log.d("this is the matter", String.valueOf(videos.get(player.getCurrentWindowIndex()).getDisplayName()));
+            Playlist bottomSheet = new Playlist(VideoPlayer.this, videos, playlistPos, videos.get(player.getCurrentWindowIndex()).getDisplayName());
             bottomSheet.show(fragmentManager, bottomSheet.getTag());
         });
 
 
         scaling.setOnClickListener(v -> {
-            if (zoomFlag) {
-                zoomFlag = false;
-                binding.exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-                scaling.setImageResource(R.drawable.ic_zoom_out);
-            } else {
-                zoomFlag = true;
+            if (zoomFlag == 1) {
+                zoomFlag = 2;
+                binding.exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+                scaling.setImageResource(R.drawable.ic_fill);
+            } else if (zoomFlag == 2) {
+                zoomFlag = 3;
                 binding.exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-                scaling.setImageResource(R.drawable.ic_zoom_in);
+                scaling.setImageResource(R.drawable.ic_fit);
+            } else {
+                zoomFlag = 1;
+                binding.exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+                scaling.setImageResource(R.drawable.ic_zoom);
             }
 
 //            Toast.makeText(VideoPlayer.this, "dfdgfdgfd", Toast.LENGTH_SHORT).show();
