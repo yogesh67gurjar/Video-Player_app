@@ -16,6 +16,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Rational;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -69,12 +71,18 @@ public class VideoPlayer extends AppCompatActivity {
 
     FragmentManager fragmentManager;
 
+    private GestureDetector gestureDetector;
+    private VideoGestureListener gestureListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityVideoPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // 10 second gestures
+        gestureListener = new VideoGestureListener();
+        gestureDetector = new GestureDetector(VideoPlayer.this, gestureListener);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -86,8 +94,36 @@ public class VideoPlayer extends AppCompatActivity {
 
         // play kro video ko or kya
         playVideo();
+
+
+        binding.exoPlayerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
     }
 
+    public void skipVideo(int seconds) {
+        long currentPosition = player.getCurrentPosition();
+        long newPosition = currentPosition + (seconds * 1000); // Convert seconds to milliseconds
+
+        player.seekTo(newPosition);
+    }
+
+    private class VideoGestureListener extends GestureDetector.SimpleOnGestureListener {
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            // Perform the action to skip 10 seconds of video here
+            skipVideo(10);
+            return true;
+        }
+
+
+    }
 
     private void playVideo() {
         //  apn ne exoplayer ka jo view bnaya he in xml
@@ -106,7 +142,9 @@ public class VideoPlayer extends AppCompatActivity {
         ConstraintLayout rootLayout = binding.exoPlayerView.findViewById(R.id.rootLayout);
         ImageView unLock = binding.exoPlayerView.findViewById(R.id.exoPlayerUnLock);
         ImageView lock = binding.exoPlayerView.findViewById(R.id.exoplayer_lock);
-
+        CardView scaleCard = binding.exoPlayerView.findViewById(R.id.scaleCard);
+        TextView scaleCardText = binding.exoPlayerView.findViewById(R.id.scaleCardText);
+        ImageView scaleCardImage = binding.exoPlayerView.findViewById(R.id.scaleCardImage);
         // yha apn ne exoplayer ko initialize kr diya ki isi same activity me apn he and isko use krna chahte he
         player = new SimpleExoPlayer.Builder(VideoPlayer.this).build();
         defaultDataSourceFactory = new DefaultDataSourceFactory(VideoPlayer.this, Util.getUserAgent(VideoPlayer.this, "videoPlayerApp"));
@@ -170,14 +208,26 @@ public class VideoPlayer extends AppCompatActivity {
                 zoomFlag = 2;
                 binding.exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
                 scaling.setImageResource(R.drawable.ic_fill);
+                scaleCardText.setText("fill");
+                scaleCardImage.setImageResource(R.drawable.ic_fill);
+                scaleCard.setAlpha(1);
+                scaleCard.animate().alpha(0).setDuration(500);
             } else if (zoomFlag == 2) {
                 zoomFlag = 3;
                 binding.exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
                 scaling.setImageResource(R.drawable.ic_fit);
+                scaleCardText.setText("fit");
+                scaleCardImage.setImageResource(R.drawable.ic_fit);
+                scaleCard.setAlpha(1);
+                scaleCard.animate().alpha(0).setDuration(500);
             } else {
                 zoomFlag = 1;
                 binding.exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
                 scaling.setImageResource(R.drawable.ic_zoom);
+                scaleCardText.setText("zoom");
+                scaleCardImage.setImageResource(R.drawable.ic_zoom);
+                scaleCard.setAlpha(1);
+                scaleCard.animate().alpha(0).setDuration(500);
             }
 
 //            Toast.makeText(VideoPlayer.this, "dfdgfdgfd", Toast.LENGTH_SHORT).show();
@@ -326,6 +376,15 @@ public class VideoPlayer extends AppCompatActivity {
         player.getPlaybackState();
     }
 
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // Pass the touch event to the GestureDetector to handle gestures
+        gestureDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+
+
     //    @Override
 //    protected void onStop() {
 //        super.onStop();
@@ -365,20 +424,6 @@ public class VideoPlayer extends AppCompatActivity {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //  app ko pip mode me daalne ka function kaha daale
