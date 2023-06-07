@@ -22,9 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.androiddeveloperyogesh.videoplayerapp.Adapters.PlaylistAdapter;
 import com.androiddeveloperyogesh.videoplayerapp.BottomSheet.Playlist;
-import com.androiddeveloperyogesh.videoplayerapp.BottomSheet.VideoThreeDot;
 import com.androiddeveloperyogesh.videoplayerapp.Models.Video;
 import com.androiddeveloperyogesh.videoplayerapp.R;
 import com.androiddeveloperyogesh.videoplayerapp.databinding.ActivityVideoPlayerBinding;
@@ -40,7 +38,6 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,8 +46,6 @@ public class VideoPlayer extends AppCompatActivity {
 
     // currently jo bhi video play ho rhi he uski int me position kya he List<Videos>videos me
     int playlistPos;
-    PlaylistAdapter playlistAdapter;
-    // playlist recyclerview related
 
     Video video;
     List<Video> videos;
@@ -370,6 +365,20 @@ public class VideoPlayer extends AppCompatActivity {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //  app ko pip mode me daalne ka function kaha daale

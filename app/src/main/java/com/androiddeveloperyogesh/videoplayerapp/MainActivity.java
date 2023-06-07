@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.androiddeveloperyogesh.videoplayerapp.Adapters.FoldersAdapter;
@@ -270,11 +271,34 @@ public class MainActivity extends AppCompatActivity {
                     // Permission is granted
                     Log.d("manageStorage", "yes yes yes yes ");
                 } else {
-                    Log.d("manageStorage", "no no no no ");
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
+
+                    Dialog permissionDialog = new Dialog(MainActivity.this);
+                    permissionDialog.setContentView(R.layout.dialog_permission);
+                    permissionDialog.setCancelable(false);
+                    permissionDialog.show();
+
+//                    ImageButton close = permissionDialog.findViewById(R.id.closeBtn);
+                    AppCompatButton openSettings = permissionDialog.findViewById(R.id.openSettingsBtn);
+
+//                    close.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            permissionDialog.dismiss();
+//                        }
+//                    });
+
+                    openSettings.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("manageStorage", "no no no no ");
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                            permissionDialog.dismiss();
+                        }
+                    });
+
                 }
             }
 
