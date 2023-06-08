@@ -47,7 +47,8 @@
             android:name=".VideoPlayerActivity.VideoPlayer"
             android:configChanges="orientation|screenLayout|screenSize|uiMode|layoutDirection"
             android:exported="false"
-            android:parentActivityName=".VideoFilesList" />
+            android:parentActivityName=".VideoFilesList"
+            android:theme="@style/myVideoPlayerTheme" />
 
         <!--        android:resizeableActivity="true"-->
         <!--        android:supportsPictureInPicture="true"-->

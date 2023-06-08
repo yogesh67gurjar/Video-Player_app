@@ -8,9 +8,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.ValueAnimator;
 import android.app.PictureInPictureParams;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +22,8 @@ import android.util.Rational;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,6 +78,16 @@ public class VideoPlayer extends AppCompatActivity {
 
     private GestureDetector gestureDetector;
     private VideoGestureListener gestureListener;
+    CardView tenSecRewindCard;
+    CardView tenSecForwardCard;
+
+    private AudioManager audioManager;
+    private Window window;
+
+    private int maxVolume;
+    private float brightness;
+    TextView volumeSwipe, brightnessSwipe;
+    View controlView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +96,14 @@ public class VideoPlayer extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // 10 second gestures
-        gestureListener = new VideoGestureListener();
+        gestureListener = new VideoGestureListener(VideoPlayer.this);
         gestureDetector = new GestureDetector(VideoPlayer.this, gestureListener);
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        window = getWindow();
+
+        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        brightness = window.getAttributes().screenBrightness;
 
         fragmentManager = getSupportFragmentManager();
 
@@ -95,13 +116,17 @@ public class VideoPlayer extends AppCompatActivity {
         // play kro video ko or kya
         playVideo();
 
+        binding.exoPlayerView.setOnTouchListener((v, event) -> {
+            boolean consumed = gestureDetector.onTouchEvent(event);
 
-        binding.exoPlayerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
+            // Manually show the controls when the screen is touched again
+            if (event.getAction() == MotionEvent.ACTION_UP && !consumed) {
+                binding.exoPlayerView.showController();
             }
+
+            return consumed;
         });
+
     }
 
     public void skipVideo(int seconds) {
@@ -112,18 +137,177 @@ public class VideoPlayer extends AppCompatActivity {
     }
 
     private class VideoGestureListener extends GestureDetector.SimpleOnGestureListener {
-        private static final int SWIPE_THRESHOLD = 100;
-        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+        private static final int SWIPE_THRESHOLD = 200;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 50;
+        private float prevBrightness = 0.5f; // Initial brightness value
+        private int prevVolume = 0; // Initial volume value
+        private boolean areControlsVisible = true; // Initial state of controls visibility
 
+
+
+        private final Context context;
+        private boolean isLeftSwipe = false;
+        private boolean isRightSwipe = false;
+
+        private ValueAnimator brightnessAnimator;
+        private ValueAnimator volumeAnimator;
+
+        public VideoGestureListener(Context context) {
+            this.context = context;
+        }
         @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            // Perform the action to skip 10 seconds of video here
-            skipVideo(10);
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            toggleControlsVisibility();
             return true;
         }
 
+        private void toggleControlsVisibility() {
+            if (areControlsVisible) {
+                hideControls();
+            } else {
+                showControls();
+            }
+        }
 
+        private void hideControls() {
+            // Hide your custom controls
+            // For example:
+            controlView.setVisibility(View.GONE);
+
+            areControlsVisible = false;
+        }
+
+        private void showControls() {
+            // Show your custom controls
+            // For example:
+            controlView.setVisibility(View.VISIBLE);
+
+            areControlsVisible = true;
+        }
+        @Override
+        public boolean onDown(MotionEvent e) {
+            isLeftSwipe = false;
+            isRightSwipe = false;
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            float deltaY = e1.getY() - e2.getY();
+            float deltaX = e1.getX() - e2.getX();
+
+            if (!isLeftSwipe && !isRightSwipe) {
+                // Determine if it's a left or right swipe
+                if (e1.getX() < getWindowManager().getDefaultDisplay().getWidth() / 2) {
+                    isLeftSwipe = true;
+                } else {
+                    isRightSwipe = true;
+                }
+            }
+
+            // Check if the swipe is vertical and handle brightness and volume accordingly
+            if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > SWIPE_THRESHOLD && Math.abs(distanceY) > SWIPE_VELOCITY_THRESHOLD) {
+                if (isLeftSwipe) {
+                    // Vertical swipe on the left side: Adjust brightness
+                    float brightnessDelta = deltaY / getWindowManager().getDefaultDisplay().getHeight();
+                    brightness += brightnessDelta;
+                    brightness = Math.max(0, Math.min(brightness, 1));
+
+                    // Cancel any ongoing brightness animation
+                    if (brightnessAnimator != null && brightnessAnimator.isRunning()) {
+                        brightnessAnimator.cancel();
+                    }
+
+                    // Smoothly adjust brightness using animation
+                    brightnessAnimator = ValueAnimator.ofFloat(prevBrightness, brightness);
+                    brightnessAnimator.setDuration(500); // Adjust the duration as needed
+                    brightnessAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            float interpolatedValue = (float) animation.getAnimatedValue();
+                            WindowManager.LayoutParams layoutParams = window.getAttributes();
+                            layoutParams.screenBrightness = interpolatedValue;
+                            window.setAttributes(layoutParams);
+                        }
+                    });
+                    brightnessAnimator.start();
+
+                    // Update previous brightness value
+                    prevBrightness = brightness;
+
+                    brightnessSwipe.setText(getBrightnessInt(brightness));
+                    brightnessSwipe.setAlpha(1);
+                    brightnessSwipe.animate().alpha(0).setDuration(800);
+                } else if (isRightSwipe) {
+                    // Vertical swipe on the right side: Adjust volume
+                    float volumeDelta = deltaY / getWindowManager().getDefaultDisplay().getHeight();
+                    int volumeChange = (int) (volumeDelta * maxVolume);
+                    int newVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + volumeChange;
+                    newVolume = Math.max(0, Math.min(newVolume, maxVolume));
+
+                    // Cancel any ongoing volume animation
+                    if (volumeAnimator != null && volumeAnimator.isRunning()) {
+                        volumeAnimator.cancel();
+                    }
+
+                    // Smoothly adjust volume using animation
+                    volumeAnimator = ValueAnimator.ofInt(prevVolume, newVolume);
+                    volumeAnimator.setDuration(500); // Adjust the duration as needed
+                    volumeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int interpolatedValue = (int) animation.getAnimatedValue();
+                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, interpolatedValue, 0);
+                        }
+                    });
+                    volumeAnimator.start();
+
+                    // Update previous volume value
+                    prevVolume = newVolume;
+
+                    volumeSwipe.setText(String.valueOf(newVolume));
+                    volumeSwipe.setAlpha(1);
+                    volumeSwipe.animate().alpha(0).setDuration(800);
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            // Determine the tap position relative to the screen width
+            float tapX = e.getX();
+            float screenWidth = ((View) binding.exoPlayerView.getParent()).getWidth();
+            float tapPercentage = tapX / screenWidth;
+
+            // Calculate the skip duration based on the tap position
+            int skipSeconds;
+            if (tapPercentage < 0.5) {
+                tenSecRewindCard.setAlpha(1);
+                tenSecRewindCard.animate().alpha(0).setDuration(800);
+                // Skip backward 10 seconds if tapped on the left side
+                skipSeconds = -10;
+            } else {
+                tenSecForwardCard.setAlpha(1);
+                tenSecForwardCard.animate().alpha(0).setDuration(800);
+                // Skip forward 10 seconds if tapped on the right side
+                skipSeconds = 10;
+            }
+
+            // Perform the action to skip the specified duration of the video
+            skipVideo(skipSeconds);
+            return true;
+        }
     }
+
+    private String getBrightnessInt(float brightness) {
+//        String str = String.format("%.1f", brightness);
+//        Log.d("strstrstr", str);
+//        str = str.split(".")[0];
+        return "str";
+    }
+
 
     private void playVideo() {
         //  apn ne exoplayer ka jo view bnaya he in xml
@@ -145,11 +329,18 @@ public class VideoPlayer extends AppCompatActivity {
         CardView scaleCard = binding.exoPlayerView.findViewById(R.id.scaleCard);
         TextView scaleCardText = binding.exoPlayerView.findViewById(R.id.scaleCardText);
         ImageView scaleCardImage = binding.exoPlayerView.findViewById(R.id.scaleCardImage);
+        tenSecRewindCard = binding.exoPlayerView.findViewById(R.id.tenSecRewindCard);
+        tenSecForwardCard = binding.exoPlayerView.findViewById(R.id.tenSecForwardCard);
+        volumeSwipe = binding.exoPlayerView.findViewById(R.id.volumeSwipe);
+        brightnessSwipe = binding.exoPlayerView.findViewById(R.id.brightnessSwipe);
         // yha apn ne exoplayer ko initialize kr diya ki isi same activity me apn he and isko use krna chahte he
         player = new SimpleExoPlayer.Builder(VideoPlayer.this).build();
         defaultDataSourceFactory = new DefaultDataSourceFactory(VideoPlayer.this, Util.getUserAgent(VideoPlayer.this, "videoPlayerApp"));
         concatenatingMediaSource = new ConcatenatingMediaSource();
 
+
+// In your onCreate or onCreateView method, initialize the controlView
+        controlView = binding.exoPlayerView.findViewById(R.id.root); // Replace R.id.custom_control_view with the ID of your custom control view
 
         for (int i = 0; i < videos.size(); i++) {
             //  jo video play krna he uski position lene k liye he ye loop bs or kuch nhi
