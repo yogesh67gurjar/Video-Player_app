@@ -107,7 +107,6 @@ public class VideoFilesList extends AppCompatActivity {
         id = item.getItemId();
 
         if (id == R.id.sortBy) {
-            Toast.makeText(this, "sort by", Toast.LENGTH_SHORT).show();
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(VideoFilesList.this);
             alertDialog.setTitle("SortBy");
             alertDialog.setPositiveButton("Ok", (dialog, which) -> {

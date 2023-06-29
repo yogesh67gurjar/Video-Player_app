@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Video Player App</string>
+    <string name="app_name">Xm player</string>
 
     <string name="allow_access">उपयोग की अनुमति दें</string>
     <string name="nothing_found">कुछ भी नहीं मिला !!!</string>

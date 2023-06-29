@@ -53,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadLocale();
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-//        loadLocale();
 
         // action bar / toolbar
         setSupportActionBar(binding.toolbar);
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "भाषा सफलतापूर्वक बदल गई", Toast.LENGTH_SHORT).show();
                             changeLanguage("hindi");
                             appLanguageDialog.dismiss();
+                            recreate();
                         }
                     });
                     english.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Language Changed Successfully", Toast.LENGTH_SHORT).show();
                             changeLanguage("english");
                             appLanguageDialog.dismiss();
+                            recreate();
                         }
                     });
                     appLanguageDialog.show();
@@ -211,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadLocale() {
         SharedPreferences sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
         if (sharedPreferences.contains("language")) {
+            Log.d("he k nhi", "yes");
             String lang = sharedPreferences.getString("language", "");
             if (lang.equalsIgnoreCase("hi")) {
                 changeLanguage("hindi");
@@ -369,16 +372,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("xm", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("language", str);
-        editor.commit();
+        editor.apply();
 
         Locale locale = new Locale(str);
         Locale.setDefault(locale);
         Configuration configuration = new Configuration();
         configuration.locale = locale;
         getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
-
-
-        recreate();
     }
 
 }
