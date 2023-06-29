@@ -71,8 +71,8 @@ public class VideoPlayer extends AppCompatActivity {
 
     FragmentManager fragmentManager;
 
-    private GestureDetector gestureDetector;
-    private VideoGestureListener gestureListener;
+//    private GestureDetector gestureDetector;
+//    private VideoGestureListener gestureListener;
     CardView tenSecRewindCard;
     CardView tenSecForwardCard;
 
@@ -90,9 +90,9 @@ public class VideoPlayer extends AppCompatActivity {
         binding = ActivityVideoPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // 10 second gestures
-        gestureListener = new VideoGestureListener(VideoPlayer.this);
-        gestureDetector = new GestureDetector(VideoPlayer.this, gestureListener);
+//        // 10 second gestures
+//        gestureListener = new VideoGestureListener(VideoPlayer.this);
+//        gestureDetector = new GestureDetector(VideoPlayer.this, gestureListener);
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         window = getWindow();
@@ -111,16 +111,16 @@ public class VideoPlayer extends AppCompatActivity {
         // play kro video ko or kya
         playVideo();
 
-        binding.exoPlayerView.setOnTouchListener((v, event) -> {
-            boolean consumed = gestureDetector.onTouchEvent(event);
-
-            // Manually show the controls when the screen is touched again
-            if (event.getAction() == MotionEvent.ACTION_UP && !consumed) {
-                binding.exoPlayerView.showController();
-            }
-
-            return consumed;
-        });
+//        binding.exoPlayerView.setOnTouchListener((v, event) -> {
+//            boolean consumed = gestureDetector.onTouchEvent(event);
+//
+//            // Manually show the controls when the screen is touched again
+//            if (event.getAction() == MotionEvent.ACTION_UP && !consumed) {
+//                binding.exoPlayerView.showController();
+//            }
+//
+//            return consumed;
+//        });
 
     }
 
@@ -186,88 +186,88 @@ public class VideoPlayer extends AppCompatActivity {
             return true;
         }
 
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            float deltaY = e1.getY() - e2.getY();
-            float deltaX = e1.getX() - e2.getX();
-
-            if (!isLeftSwipe && !isRightSwipe) {
-                // Determine if it's a left or right swipe
-                if (e1.getX() < getWindowManager().getDefaultDisplay().getWidth() / 2) {
-                    isLeftSwipe = true;
-                } else {
-                    isRightSwipe = true;
-                }
-            }
-
-            // Check if the swipe is vertical and handle brightness and volume accordingly
-            if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > SWIPE_THRESHOLD && Math.abs(distanceY) > SWIPE_VELOCITY_THRESHOLD) {
-                if (isLeftSwipe) {
-                    // Vertical swipe on the left side: Adjust brightness
-                    float brightnessDelta = deltaY / getWindowManager().getDefaultDisplay().getHeight();
-                    brightness += brightnessDelta;
-                    brightness = Math.max(0, Math.min(brightness, 1));
-
-                    // Cancel any ongoing brightness animation
-                    if (brightnessAnimator != null && brightnessAnimator.isRunning()) {
-                        brightnessAnimator.cancel();
-                    }
-
-                    // Smoothly adjust brightness using animation
-                    brightnessAnimator = ValueAnimator.ofFloat(prevBrightness, brightness);
-                    brightnessAnimator.setDuration(500); // Adjust the duration as needed
-                    brightnessAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animation) {
-                            float interpolatedValue = (float) animation.getAnimatedValue();
-                            WindowManager.LayoutParams layoutParams = window.getAttributes();
-                            layoutParams.screenBrightness = interpolatedValue;
-                            window.setAttributes(layoutParams);
-                        }
-                    });
-                    brightnessAnimator.start();
-
-                    // Update previous brightness value
-                    prevBrightness = brightness;
-
-                    brightnessSwipe.setText(getBrightnessInt(brightness));
-                    brightnessSwipe.setAlpha(1);
-                    brightnessSwipe.animate().alpha(0).setDuration(800);
-                } else if (isRightSwipe) {
-                    // Vertical swipe on the right side: Adjust volume
-                    float volumeDelta = deltaY / getWindowManager().getDefaultDisplay().getHeight();
-                    int volumeChange = (int) (volumeDelta * maxVolume);
-                    int newVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + volumeChange;
-                    newVolume = Math.max(0, Math.min(newVolume, maxVolume));
-
-                    // Cancel any ongoing volume animation
-                    if (volumeAnimator != null && volumeAnimator.isRunning()) {
-                        volumeAnimator.cancel();
-                    }
-
-                    // Smoothly adjust volume using animation
-                    volumeAnimator = ValueAnimator.ofInt(prevVolume, newVolume);
-                    volumeAnimator.setDuration(500); // Adjust the duration as needed
-                    volumeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animation) {
-                            int interpolatedValue = (int) animation.getAnimatedValue();
-                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, interpolatedValue, 0);
-                        }
-                    });
-                    volumeAnimator.start();
-
-                    // Update previous volume value
-                    prevVolume = newVolume;
-
-                    volumeSwipe.setText(String.valueOf(newVolume));
-                    volumeSwipe.setAlpha(1);
-                    volumeSwipe.animate().alpha(0).setDuration(800);
-                }
-            }
-
-            return true;
-        }
+//        @Override
+//        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//            float deltaY = e1.getY() - e2.getY();
+//            float deltaX = e1.getX() - e2.getX();
+//
+//            if (!isLeftSwipe && !isRightSwipe) {
+//                // Determine if it's a left or right swipe
+//                if (e1.getX() < getWindowManager().getDefaultDisplay().getWidth() / 2) {
+//                    isLeftSwipe = true;
+//                } else {
+//                    isRightSwipe = true;
+//                }
+//            }
+//
+//            // Check if the swipe is vertical and handle brightness and volume accordingly
+//            if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > SWIPE_THRESHOLD && Math.abs(distanceY) > SWIPE_VELOCITY_THRESHOLD) {
+//                if (isLeftSwipe) {
+//                    // Vertical swipe on the left side: Adjust brightness
+//                    float brightnessDelta = deltaY / getWindowManager().getDefaultDisplay().getHeight();
+//                    brightness += brightnessDelta;
+//                    brightness = Math.max(0, Math.min(brightness, 1));
+//
+//                    // Cancel any ongoing brightness animation
+//                    if (brightnessAnimator != null && brightnessAnimator.isRunning()) {
+//                        brightnessAnimator.cancel();
+//                    }
+//
+//                    // Smoothly adjust brightness using animation
+//                    brightnessAnimator = ValueAnimator.ofFloat(prevBrightness, brightness);
+//                    brightnessAnimator.setDuration(500); // Adjust the duration as needed
+//                    brightnessAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                        @Override
+//                        public void onAnimationUpdate(ValueAnimator animation) {
+//                            float interpolatedValue = (float) animation.getAnimatedValue();
+//                            WindowManager.LayoutParams layoutParams = window.getAttributes();
+//                            layoutParams.screenBrightness = interpolatedValue;
+//                            window.setAttributes(layoutParams);
+//                        }
+//                    });
+//                    brightnessAnimator.start();
+//
+//                    // Update previous brightness value
+//                    prevBrightness = brightness;
+//
+//                    brightnessSwipe.setText(getBrightnessInt(brightness));
+//                    brightnessSwipe.setAlpha(1);
+//                    brightnessSwipe.animate().alpha(0).setDuration(800);
+//                } else if (isRightSwipe) {
+//                    // Vertical swipe on the right side: Adjust volume
+//                    float volumeDelta = deltaY / getWindowManager().getDefaultDisplay().getHeight();
+//                    int volumeChange = (int) (volumeDelta * maxVolume);
+//                    int newVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + volumeChange;
+//                    newVolume = Math.max(0, Math.min(newVolume, maxVolume));
+//
+//                    // Cancel any ongoing volume animation
+//                    if (volumeAnimator != null && volumeAnimator.isRunning()) {
+//                        volumeAnimator.cancel();
+//                    }
+//
+//                    // Smoothly adjust volume using animation
+//                    volumeAnimator = ValueAnimator.ofInt(prevVolume, newVolume);
+//                    volumeAnimator.setDuration(500); // Adjust the duration as needed
+//                    volumeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                        @Override
+//                        public void onAnimationUpdate(ValueAnimator animation) {
+//                            int interpolatedValue = (int) animation.getAnimatedValue();
+//                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, interpolatedValue, 0);
+//                        }
+//                    });
+//                    volumeAnimator.start();
+//
+//                    // Update previous volume value
+//                    prevVolume = newVolume;
+//
+//                    volumeSwipe.setText(String.valueOf(newVolume));
+//                    volumeSwipe.setAlpha(1);
+//                    volumeSwipe.animate().alpha(0).setDuration(800);
+//                }
+//            }
+//
+//            return true;
+//        }
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
@@ -563,12 +563,12 @@ public class VideoPlayer extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // Pass the touch event to the GestureDetector to handle gestures
-        gestureDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        // Pass the touch event to the GestureDetector to handle gestures
+//        gestureDetector.onTouchEvent(event);
+//        return super.onTouchEvent(event);
+//    }
 
 
     //    @Override
