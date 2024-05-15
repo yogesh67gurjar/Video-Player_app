@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -21,6 +22,9 @@ public class Splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+
 
 
         Handler handler = new Handler();
@@ -41,12 +45,7 @@ public class Splash extends AppCompatActivity {
 
         // jese hi videoview prepare ho jae play hone k liye
         // us video ko loop me chla do
-        binding.bg.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-            }
-        });
+        binding.bg.setOnPreparedListener(mp -> mp.setLooping(true));
 
 
         // splash animations
